@@ -1,26 +1,28 @@
+const knex = require("knex")(require("../knexfile"));
+
 module.exports = [
-    {
-      user_id: "a193a6a7-42ab-4182-97dc-555ee85e7486",
-      first_name: "Bart",
-      last_name: "Simpson",
-      email: "bart@gmail.com",
-      status: "active",
-      address: "455 granville st, vancouver, bc, canada",
-      about: "My name is Bart, and I've lived in the neighborhood for all of my life. I like to skateboard and paint graffiti (sorry if I've tagged your place before). I'm excited to help with any maintenance around your place in exchange for baked goods.",
-      // location: "ST_GeomFromText('POINT(40.71727401 -74.00898606)', 0)",
-      // location: "POINT(49.28510303821817, -123.11466013373249)",
-    },
-    {
-      user_id: "h346k6a7-42ab-4182-97dc-555ee85e7486",
-      first_name: "Lisa",
-      last_name: "Simpson",
-      email: "lisa@gmail.com",
-      status: "active",
-      address: "440 granville st, vancouver, bc, canada",
-      about: "Hi everyone, Lisa here! I love to cook and bake, and I'm excited to help out with any cooking or baking needs you may have. I'm also a big fan of gardening, so I'm happy to help out with any gardening needs you may have.",
-      // location: "ST_GeomFromText('POINT(40.71727401 -74.00898606)', 0)",
-      // location: "POINT(49.28494009469127, -123.11421962221165)",
-    },
+    // {
+    //   user_id: "a193a6a7-42ab-4182-97dc-555ee85e7486",
+    //   first_name: "Bart",
+    //   last_name: "Simpson",
+    //   email: "bart@gmail.com",
+    //   status: "active",
+    //   address: "455 granville st, vancouver, bc, canada",
+    //   about: "My name is Bart, and I've lived in the neighborhood for all of my life. I like to skateboard and paint graffiti (sorry if I've tagged your place before). I'm excited to help with any maintenance around your place in exchange for baked goods.",
+    //   location: "ST_GeomFromText('POINT(40.71727401,-74.00898606)')",
+    //   // location: "POINT(49.28510303821817,-123.11466013373249)",
+    // },
+    // {
+    //   user_id: "h346k6a7-42ab-4182-97dc-555ee85e7486",
+    //   first_name: "Lisa",
+    //   last_name: "Simpson",
+    //   email: "lisa@gmail.com",
+    //   status: "active",
+    //   address: "440 granville st, vancouver, bc, canada",
+    //   about: "Hi everyone, Lisa here! I love to cook and bake, and I'm excited to help out with any cooking or baking needs you may have. I'm also a big fan of gardening, so I'm happy to help out with any gardening needs you may have.",
+    //   location: "ST_GeomFromText('POINT(40.71727401,-74.00898606)')",
+    //   // location: "POINT(49.28494009469127,-123.11421962221165)",
+    // },
     {
       user_id: "9b4f79ea-0e6c-4e59-8e05-afd933d0b3d3",
       first_name: "Ned",
@@ -29,8 +31,9 @@ module.exports = [
       status: "active",
       address: "757 w hastings, vancouver, bc, canada",
       about: "How-didilly-doo neighbors. I look forward to meeting you all and exchanging our blessed neighborhood.",
-      // location: "(POINT(40.71727401 -74.00898606)', 0)",
-      // location: "POINT(49.285493272008466, -123.11455548945395)",
+      // location: "ST_GeomFromText('POINT(40.71727401 -74.00898606)')"
+      // location: "POINT(49.285493272008466 -123.11455548945395)",
+      location: knex.raw('point(49.285493272008466, -123.11455548945395)')
     },
   ];
   

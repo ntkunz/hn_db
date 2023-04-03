@@ -5,14 +5,15 @@
 exports.up = function (knex) {
     return knex.schema.createTable('users', (table) => {
       table.uuid('user_id').primary().notNullable();
-      // table.uuid('user_id').references('user_id').onUpdate('CASCADE').onDelete('CASCADE');
+      // table.uuid('user_id').primary().notNullable().onUpdate('CASCADE').onDelete('CASCADE');
       table.string('first_name').notNullable();
       table.string('last_name').notNullable();
       table.string('email').notNullable();
       table.string('status').notNullable();
       table.string('address').notNullable();
       table.string('about').notNullable();
-      // table.point('location').notNullable();
+      table.point('location').notNullable();
+      // table.specificType('location','Point').nullable();
       table.timestamps(true, true);
     });
   };
