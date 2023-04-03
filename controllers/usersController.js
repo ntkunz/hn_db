@@ -12,6 +12,7 @@ exports.index = (_req, res) => {
 		);
 };
 
+
 //==============================================================
 //how to retrieve lat and long locations from mysql with knex
 // SELECT ST_Distance_Sphere(point1, point2) as distance
