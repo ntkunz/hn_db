@@ -7,7 +7,7 @@ module.exports = [
       status: "active",
       address: "455 granville st, vancouver, bc, canada",
       about: "My name is Bart, and I've lived in the neighborhood for all of my life. I like to skateboard and paint graffiti (sorry if I've tagged your place before). I'm excited to help with any maintenance around your place in exchange for baked goods.",
-      location: "ST_GeomFromText('POINT(40.71727401 -74.00898606)', 0)",
+      // location: "ST_GeomFromText('POINT(40.71727401 -74.00898606)', 0)",
       // location: "POINT(49.28510303821817, -123.11466013373249)",
     },
     {
@@ -18,7 +18,7 @@ module.exports = [
       status: "active",
       address: "440 granville st, vancouver, bc, canada",
       about: "Hi everyone, Lisa here! I love to cook and bake, and I'm excited to help out with any cooking or baking needs you may have. I'm also a big fan of gardening, so I'm happy to help out with any gardening needs you may have.",
-      location: "ST_GeomFromText('POINT(40.71727401 -74.00898606)', 0)",
+      // location: "ST_GeomFromText('POINT(40.71727401 -74.00898606)', 0)",
       // location: "POINT(49.28494009469127, -123.11421962221165)",
     },
     {
@@ -29,7 +29,7 @@ module.exports = [
       status: "active",
       address: "757 w hastings, vancouver, bc, canada",
       about: "How-didilly-doo neighbors. I look forward to meeting you all and exchanging our blessed neighborhood.",
-      location: "(POINT(40.71727401 -74.00898606)', 0)",
+      // location: "(POINT(40.71727401 -74.00898606)', 0)",
       // location: "POINT(49.285493272008466, -123.11455548945395)",
     },
   ];
