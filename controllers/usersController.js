@@ -1,6 +1,6 @@
 const knex = require("knex")(require("../knexfile"));
 
-//GET WAREHOUSES
+//get all users	
 exports.index = (_req, res) => {
 	knex("users")
 		.then((data) => {

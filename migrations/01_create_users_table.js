@@ -13,7 +13,6 @@ exports.up = function (knex) {
       table.string('address').notNullable();
       table.string('about').notNullable();
       table.point('location').notNullable();
-      // table.specificType('location','Point').nullable();
       table.timestamps(true, true);
     });
   };
