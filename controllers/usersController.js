@@ -37,17 +37,6 @@ exports.getUserSkills = async (req, res) => {
   };
 
 
-//   exports.index = (_req, res) => {
-// 	knex("users")
-// 		.then((data) => {
-// 			res.status(200).json(data);
-// 			// console.log('users retrieved successfully: ', data)
-// 		})
-// 		.catch((err) =>
-// 			res.status(400).send(`Error retrieving users: ${err}`)
-// 		);
-// };
-
 
 // exports.getNeighbors = async (req, res) => {
 // 	try {
@@ -63,15 +52,6 @@ exports.getUserSkills = async (req, res) => {
 // 		// 'users.location','ST_DWithin(users.location, ST_MakePoint(-122.079513,45.607703), 1000)'
 // //==================
 
-
-
-// // ))
-// 		res.json(neighbors);
-// 		console.log("neighbors : ", neighbors)
-// 	} catch (err) {
-// 		console.error(err);
-// 		res.status(400).send(`Error finding item ${req.params.id} ${err}`);
-// 	}
 // }
 // const result = await knex('events')
 //     .join('locations', 'events.Location', 'locations.id')

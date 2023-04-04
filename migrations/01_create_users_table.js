@@ -9,6 +9,7 @@ exports.up = function (knex) {
       table.string('first_name').notNullable();
       table.string('last_name').notNullable();
       table.string('email').notNullable();
+      table.string('image_url').nullable();
       table.string('status').notNullable();
       table.string('address').notNullable();
       table.string('about').notNullable();
