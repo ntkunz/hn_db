@@ -6,7 +6,11 @@ router
 .get(usersController.index);
 
 router
-.route("/:id")
-.get(usersController.getUserSkills)
+.route("/skills/:id")
+.get(usersController.getUserSkills);
+
+// router
+// .route("/neighbors/:id")
+// .get(usersController.getNeighbors);
 
 module.exports = router;
