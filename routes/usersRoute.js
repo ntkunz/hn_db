@@ -5,4 +5,8 @@ router
 .route('/')
 .get(usersController.index);
 
+router
+.route("/:id")
+.get(usersController.getUserSkills)
+
 module.exports = router;

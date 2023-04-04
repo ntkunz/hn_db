@@ -12,6 +12,48 @@ exports.index = (_req, res) => {
 		);
 };
 
+// exports.getSingleUserzzzzzzzzzzzzzzzz = (req, res) => {
+// 	knex("users")
+// 		// .join("users", "users.id", "=", "userskills.user_id")
+// 		.join(`userskills`, `users.id`, "=", `userskills.user_id`)
+// 		.select("users.*", "userskills.skill", "userskills.offer")
+// 		// select `users`.*, `userskills`.`skill`, `userskills`.`offer` from `users` inner join `userskills` on `users`.`id` = `userskills`.`user_id` where `users`.`id` = '9b4f79ea-0e6c-4e59-8e05-afd933d0b3d3'
+// 		.where(`users.id`, "=", '9b4f79ea-0e6c-4e59-8e05-afd933d0b3d3')
+// 		// .where("users.id", req.params.id)
+// 			.then((data) => {
+// 				if (!data.length) {
+// 					return res
+// 					.status(404)
+// 					.send(`Item with id: ${req.params.id} can't be found`);
+// 				}
+// 				res.status(200).json(data[0]);
+// 			})
+// 		.catch((err) => {
+// 			res.status(400).send(`Error finding item ${req.params.id} ${err}`);
+// 		});
+// };
+exports.getUserSkills = async (req, res) => {
+	try {
+	  const userSkills = await knex('users')
+	  .innerJoin('userskills', 'users.user_id', '=', 'userskills.user_id')
+		.select('userskills.skill', 'userskills.offer')
+		.where('users.user_id', req.params.id);
+	  res.json(userSkills);
+	} catch (err) {
+	  console.error(err);
+	  res.status(400).send(`Error finding item ${req.params.id} ${err}`);
+	}
+  };
+
+  exports.getInventoryItem = (req, res) => {
+	knex("inventories")
+	  .join("warehouses", "inventories.warehouse_id", "=", "warehouses.id")
+	  .select("inventories.*", "warehouses.warehouse_name")
+	  .where("inventories.id", req.params.id)
+	
+	
+	}
+
 
 //==============================================================
 //how to retrieve lat and long locations from mysql with knex

@@ -45,6 +45,16 @@ module.exports = [
         user_id: "9b4f79ea-0e6c-4e59-8e05-afd933d0b3d3",
         skill: "Mechanical",
         offer: false,
+    },
+    {
+        user_id: "7j5f79ea-0e6c-4e59-8e05-afd933d0b3d3",
+        skill: "Arts and Crafts",
+        offer: true,
+    },
+    {
+        user_id: "7j5f79ea-0e6c-4e59-8e05-afd933d0b3d3",
+        skill: "Cooking",
+        offer: false,
     }
   ];
   
