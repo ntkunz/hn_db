@@ -2,5 +2,15 @@ const router = require('express').Router();
 const usersController = require('../controllers/usersController.js');
 
 router
-.route('/users')
-.get(usersController.index)
+.route('/')
+.get(usersController.index);
+
+router
+.route("/skills/:id")
+.get(usersController.getUserSkills);
+
+// router
+// .route("/neighbors/:id")
+// .get(usersController.getNeighbors);
+
+module.exports = router;

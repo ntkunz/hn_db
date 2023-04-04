@@ -1,3 +1,5 @@
+const knex = require("knex")(require("../knexfile"));
+
 module.exports = [
     {
       user_id: "a193a6a7-42ab-4182-97dc-555ee85e7486",
@@ -7,8 +9,7 @@ module.exports = [
       status: "active",
       address: "455 granville st, vancouver, bc, canada",
       about: "My name is Bart, and I've lived in the neighborhood for all of my life. I like to skateboard and paint graffiti (sorry if I've tagged your place before). I'm excited to help with any maintenance around your place in exchange for baked goods.",
-      location: "ST_GeomFromText('POINT(40.71727401 -74.00898606)', 0)",
-      // location: "POINT(49.28510303821817, -123.11466013373249)",
+      location: knex.raw('Point(-123.11466013373249,49.28510303821817)')
     },
     {
       user_id: "h346k6a7-42ab-4182-97dc-555ee85e7486",
@@ -18,8 +19,7 @@ module.exports = [
       status: "active",
       address: "440 granville st, vancouver, bc, canada",
       about: "Hi everyone, Lisa here! I love to cook and bake, and I'm excited to help out with any cooking or baking needs you may have. I'm also a big fan of gardening, so I'm happy to help out with any gardening needs you may have.",
-      location: "ST_GeomFromText('POINT(40.71727401 -74.00898606)', 0)",
-      // location: "POINT(49.28494009469127, -123.11421962221165)",
+      location: knex.raw('Point(-123.11421962221165,49.28494009469127)')
     },
     {
       user_id: "9b4f79ea-0e6c-4e59-8e05-afd933d0b3d3",
@@ -29,8 +29,17 @@ module.exports = [
       status: "active",
       address: "757 w hastings, vancouver, bc, canada",
       about: "How-didilly-doo neighbors. I look forward to meeting you all and exchanging our blessed neighborhood.",
-      location: "(POINT(40.71727401 -74.00898606)', 0)",
-      // location: "POINT(49.285493272008466, -123.11455548945395)",
+      location: knex.raw('point(-123.11455548945395,49.285493272008466)')
+    },
+    {
+      user_id: "7j5f79ea-0e6c-4e59-8e05-afd933d0b3d3",
+      first_name: "Brendan",
+      last_name: "Small",
+      email: "homemovies@gmail.com",
+      status: "active",
+      address: "3228 east 23rd, Spokane, Wa, USA, 99223",
+      about: "Brendan here. I love making movies and music videos. None of the categories fit my skillset but if you'd like some video work done, I'm your guy. I'd love to get access to some new shooting locations in return.",
+      location: knex.raw('point(-117.36181915092484,47.633491232890755)')
     },
   ];
   
