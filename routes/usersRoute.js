@@ -3,7 +3,8 @@ const usersController = require('../controllers/usersController.js');
 
 router
 .route('/')
-.get(usersController.index);
+// .get(usersController.index);
+.post(usersController.index);
 
 router
 .route("/skills/:id")
