@@ -12,21 +12,6 @@ const knex = require("knex")(require("../knexfile"));
 // 		);
 // };
 
-// exports.index = (req, res) => {
-// 	knex("users")
-// 		// .where(req.body.email, 'users.email')
-// 		.where(req.body.email, 'users.email')
-// 		.then((data) => {
-// 			res.status(200).json(data);
-// 			// console.log('users retrieved successfully: ', data)
-// 		})
-// 		.catch((err) =>
-// 			res.status(400).send(`Error retrieving users: ${err}`)
-// 		);
-// };
-
-
-
 exports.index = async (req, res) => {
 	try {const foundUser = await knex('users')
 		.where({email: req.body.email})
