@@ -3,7 +3,7 @@ const usersController = require('../controllers/usersController.js');
 
 router
 .route('/')
-.get(usersController.getNeighbors)
+.put(usersController.getNeighbors)
 .post(usersController.index);
 
 router
