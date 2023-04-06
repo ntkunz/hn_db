@@ -32,14 +32,12 @@ exports.index = async (req, res) => {
 //working on getting all neighbors based off of logged in user location
 exports.getNeighbors = async (req, res) => {
 	try {
-		console.log(req.body);
+		console.log(req.body.x);
 		let userLocation = req.body;
 
-		//anther super sql injection prone attempt
+		//THIS WORKS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!	
 		const neighbors = await knex("users")
-		// .fromRaw('users where st_distance_sphere(st_geomfromtext(st_aswkt(location), 0), st_geomfromtext("POINT(-123.11466013373249 49.28510303821817)", 0)) < 100;')
-		.fromRaw('users where st_distance_sphere(st_geomfromtext(st_aswkt(location), 0), st_geomfromtext(st_aswkt('+userLocation+')), 0)) < 100;')
-
+		.fromRaw("users where st_distance_sphere(st_geomfromtext(st_aswkt(location), 0), st_geomfromtext('POINT("+req.body.x+" "+req.body.y+")', 0)) < 100;")
 		if (neighbors) {
 			console.log(neighbors);
 			res.status(200).json(neighbors);
@@ -62,4 +60,26 @@ exports.getUserSkills = async (req, res) => {
 		res.status(400).send(`Error finding item ${req.params.id} ${err}`);
 	}
 };
+
+exports.newUser = async (req, res) => {
+	try {
+		const newUser = await knex("users").insert(req.body);
+		res.json(newUser);
+	} catch (err) {
+		console.error(err);
+		res.status(400).send(`Error adding new user ${err}`);
+	}
+}
+
+// 	// INSERT NEW WAREHOUSE INTO DATABASE
+// 	knex("warehouses")
+// 	  .insert(req.body)
+// 	  .then((result) => {
+// 		const id = result[0]; 
+// 		res.status(201).send({ id, ...req.body });
+// 	  })
+// 	  .catch((err) => {
+// 		res.status(500).send(`Error creating warehouse: ${err.message}`);
+// 	  });
+  
 

@@ -7,6 +7,10 @@ router
 .post(usersController.index);
 
 router
+.route('/newuser')
+.post(usersController.newUser);
+
+router
 .route("/skills/:id")
 .get(usersController.getUserSkills);
 
