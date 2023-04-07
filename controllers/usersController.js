@@ -11,7 +11,7 @@ exports.index = async (req, res) => {
 	} catch (err) {
 		console.error(err);
 		res.status(400).send(`Error getting user ${err}`);
-	}
+	} 
 };
 
 //get all users when a user is logged in
@@ -39,7 +39,7 @@ exports.getNeighbors = async (req, res) => {
 		const neighbors = await knex("users")
 		.fromRaw("users where st_distance_sphere(st_geomfromtext(st_aswkt(location), 0), st_geomfromtext('POINT("+req.body.x+" "+req.body.y+")', 0)) < 100;")
 		if (neighbors) {
-			console.log(neighbors);
+			// console.log(neighbors);
 			res.status(200).json(neighbors);
 		}
 	} catch (err) {
@@ -63,7 +63,18 @@ exports.getUserSkills = async (req, res) => {
 
 exports.newUser = async (req, res) => {
 	try {
-		const newUser = await knex("users").insert(req.body);
+		const newUser = await knex("users").insert({
+			user_id: req.body.user_id,
+			about: req.body.about,
+			email: req.body.email,
+			first_name: req.body.first_name,
+			last_name: req.body.last_name,
+			location: knex.raw('POINT(?, ?)', [req.body.coords[0], req.body.coords[1]]),
+			password: req.body.password,
+			image_url: req.body.image_url,
+			status: req.body.status,
+			address: req.body.address,
+		});
 		res.json(newUser);
 	} catch (err) {
 		console.error(err);
