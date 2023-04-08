@@ -1,7 +1,21 @@
 const knex = require("knex")(require("../knexfile"));
 
-// //get all users	
-// exports.index = (_req, res) => {
+exports.index = async (req, res) => {
+	try {
+		// console.log(req.body.email)
+		const foundUser = await knex("users").where({ email: req.body.email });
+		if (foundUser) {
+			// console.log(foundUser);
+			res.status(200).json(foundUser);
+		}
+	} catch (err) {
+		console.error(err);
+		res.status(400).send(`Error getting user ${err}`);
+	} 
+};
+
+//get all users when a user is logged in
+// exports.getNeighbors = (_req, res) => {
 // 	knex("users")
 // 		.then((data) => {
 // 			res.status(200).json(data);
@@ -12,90 +26,64 @@ const knex = require("knex")(require("../knexfile"));
 // 		);
 // };
 
-exports.index = (_req, res) => {
-	knex("users")
-		.then((data) => {
-			res.status(200).json(data);
-			// console.log('users retrieved successfully: ', data)
-		})
-		.catch((err) =>
-			res.status(400).send(`Error retrieving users: ${err}`)
-		);
+//how to retrieve local users in mysql command line
+// select * from users where st_distance(st_geomfromtext(st_aswkt(location), 0), st_geomfromtext('POINT(-123.11466013373249 49.28510303821817)', 0)) < 0.001;
+
+//working on getting all neighbors based off of logged in user location
+exports.getNeighbors = async (req, res) => {
+	try {
+		console.log(req.body.x);
+		let userLocation = req.body;
+
+		//THIS WORKS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!	
+		const neighbors = await knex("users")
+		.fromRaw("users where st_distance_sphere(st_geomfromtext(st_aswkt(location), 0), st_geomfromtext('POINT("+req.body.x+" "+req.body.y+")', 0)) < 100;")
+		if (neighbors) {
+			// console.log(neighbors);
+			res.status(200).json(neighbors);
+		}
+	} catch (err) {
+		console.error(err);
+		res.status(400).send(`Error getting neighbors ${err}`);
+	}
 };
 
 exports.getUserSkills = async (req, res) => {
 	try {
-	  const userSkills = await knex('users')
-	  .innerJoin('userskills', 'users.user_id', '=', 'userskills.user_id')
-		.select('userskills.skill', 'userskills.offer')
-		.where('users.user_id', req.params.id);
-	  res.json(userSkills);
+		const userSkills = await knex("users")
+			.innerJoin("userskills", "users.user_id", "=", "userskills.user_id")
+			.select("userskills.skill", "userskills.offer")
+			.where("users.user_id", req.params.id);
+		res.json(userSkills);
 	} catch (err) {
-	  console.error(err);
-	  res.status(400).send(`Error finding item ${req.params.id} ${err}`);
+		console.error(err);
+		res.status(400).send(`Error finding item ${req.params.id} ${err}`);
 	}
-  };
+};
 
-
-//   exports.index = (_req, res) => {
-// 	knex("users")
-// 		.then((data) => {
-// 			res.status(200).json(data);
-// 			// console.log('users retrieved successfully: ', data)
-// 		})
-// 		.catch((err) =>
-// 			res.status(400).send(`Error retrieving users: ${err}`)
-// 		);
-// };
-
-
-// exports.getNeighbors = async (req, res) => {
-// 	try {
-// 		const neighbors = await knex('users')
-// 		.select('users.*')
-// 		// .where(ST_Distance_sphere(users.location, GOTTA MAKE A VARIABLE HERE BASED ON MY USER! , 2000000);)
-// 		// .where(knex.raw(                
-// 		// 	round(st_distance_sphere(
-// 		// 		st_geomfromtext(CONCAT('POINT(',location,')'))
-// 		// 	)) <= 5000
-// 		// ), req.params.id);
-// 		//=======================
-// 		// 'users.location','ST_DWithin(users.location, ST_MakePoint(-122.079513,45.607703), 1000)'
-// //==================
+//create a new user
+exports.newUser = async (req, res) => {
+	try {
+		await knex("users").insert({
+			user_id: req.body.user_id,
+			about: req.body.about,
+			email: req.body.email,
+			first_name: req.body.first_name,
+			last_name: req.body.last_name,
+			location: knex.raw('POINT(?, ?)', [req.body.coords[0], req.body.coords[1]]),
+			password: req.body.password,
+			image_url: req.body.image_url,
+			status: req.body.status,
+			address: req.body.address,
+			created_at: Date.now(),
+		});
+		const newUser = await knex("users").where("user_id", req.body.user_id).first();
+		res.json(newUser);
+	} catch (err) {
+		console.error(err);
+		res.status(400).send(`Error adding new user ${err}`);
+	}
+}
 
 
 
-// // ))
-// 		res.json(neighbors);
-// 		console.log("neighbors : ", neighbors)
-// 	} catch (err) {
-// 		console.error(err);
-// 		res.status(400).send(`Error finding item ${req.params.id} ${err}`);
-// 	}
-// }
-// const result = await knex('events')
-//     .join('locations', 'events.Location', 'locations.id')
-//     .where(knex.raw(                
-//         `round(st_distance_sphere(
-//             st_geomfromtext(CONCAT('POINT(',locations.Longitude, ' ',locations.Latitude,')')),
-//             st_geomfromtext(CONCAT('POINT(` + ctx.query.Longitude + ` ` + ctx.query.Latitude + `)'))
-//         )) <= 5000`
-//     ))
-//     return result
-//==============================================================
-//how to retrieve lat and long locations from mysql with knex
-// SELECT ST_Distance_Sphere(point1, point2) as distance
-// FROM (
-//   SELECT ST_GeomFromText('POINT(longitude1 latitude1)') as point1,
-//          ST_GeomFromText('POINT(longitude2 latitude2)') as point2
-// ) as points;
-//==============================================================
-
-
-// SELECT *,
-//        ACOS(SIN(RADIANS(51.5007)) * SIN(RADIANS(lat)) + COS(RADIANS(51.5007)) * COS(RADIANS(lat))
-//        * COS(RADIANS(lng - 0.1246))) * 3959 AS `Distance in miles from Big Ben`
-// FROM places
-// WHERE  ACOS(SIN(RADIANS(51.5007)) * SIN(RADIANS(lat)) + COS(RADIANS(51.5007)) * COS(RADIANS(lat))
-//        * COS(RADIANS(lng - 0.1246))) * 3959 < 10
-// ORDER BY `Distance in miles from Big Ben`;

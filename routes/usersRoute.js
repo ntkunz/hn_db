@@ -3,7 +3,12 @@ const usersController = require('../controllers/usersController.js');
 
 router
 .route('/')
-.get(usersController.index);
+.put(usersController.getNeighbors)
+.post(usersController.index);
+
+router
+.route('/newuser')
+.post(usersController.newUser);
 
 router
 .route("/skills/:id")

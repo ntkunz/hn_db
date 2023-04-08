@@ -11,16 +11,25 @@ exports.index = (_req, res) => {
 		);
 };
 
+//add new user's skills to userskills table
+exports.newUser = async (req, res) => {
+	try {
+		await knex("userskills").insert({
+			user_id: req.body.user_id,
+			skill: req.body.skill,
+			offer: req.body.offer,
+		});
+		res.status(200).send("User skills added");
+	} catch (err) {
+		res.status(400).send(`Error adding new user skills ${err}`);
+	}
+};
 
-// exports.getUserSkills = async (req, res) => {
-// 	try {
-// 	  const userSkills = await knex('users')
-// 	  .innerJoin('userskills', 'users.user_id', '=', 'userskills.user_id')
-// 		.select('userskills.skill', 'userskills.offer')
-// 		.where('users.user_id', req.params.id);
-// 	  res.json(userSkills);
-// 	} catch (err) {
-// 	  console.error(err);
-// 	  res.status(400).send(`Error finding item ${req.params.id} ${err}`);
-// 	}
-//   };
+
+
+
+
+
+
+
+
