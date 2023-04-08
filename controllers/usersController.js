@@ -61,7 +61,7 @@ exports.getUserSkills = async (req, res) => {
 	}
 };
 
-
+//create a new user
 exports.newUser = async (req, res) => {
 	try {
 		await knex("users").insert({
@@ -84,38 +84,5 @@ exports.newUser = async (req, res) => {
 	}
 }
 
-// exports.newUser = async (req, res) => {
-// 	try {
-// 		const newUser = await knex("users").insert({
-// 			user_id: req.body.user_id,
-// 			about: req.body.about,
-// 			email: req.body.email,
-// 			first_name: req.body.first_name,
-// 			last_name: req.body.last_name,
-// 			location: knex.raw('POINT(?, ?)', [req.body.coords[0], req.body.coords[1]]),
-// 			password: req.body.password,
-// 			image_url: req.body.image_url,
-// 			status: req.body.status,
-// 			address: req.body.address,
-// 		})
-// 		// return newUser
-// 		console.log(newUser)
-// 		res.json(newUser);
-// 	} catch (err) {
-// 		console.error(err);
-// 		res.status(400).send(`Error adding new user ${err}`);
-// 	}
-// }
 
-// 	// INSERT NEW WAREHOUSE INTO DATABASE
-// 	knex("warehouses")
-// 	  .insert(req.body)
-// 	  .then((result) => {
-// 		const id = result[0]; 
-// 		res.status(201).send({ id, ...req.body });
-// 	  })
-// 	  .catch((err) => {
-// 		res.status(500).send(`Error creating warehouse: ${err.message}`);
-// 	  });
-  
 
