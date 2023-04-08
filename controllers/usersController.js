@@ -75,7 +75,6 @@ exports.newUser = async (req, res) => {
 			image_url: req.body.image_url,
 			status: req.body.status,
 			address: req.body.address,
-			created_at: Date.now(),
 		});
 		const newUser = await knex("users").where("user_id", req.body.user_id).first();
 		res.json(newUser);
