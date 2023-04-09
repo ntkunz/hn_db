@@ -32,7 +32,7 @@ exports.index = async (req, res) => {
 //working on getting all neighbors based off of logged in user location
 exports.getNeighbors = async (req, res) => {
 	try {
-		console.log(req.body.x);
+		// console.log(req.body.x);
 		let userLocation = req.body;
 
 		//THIS WORKS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!	
