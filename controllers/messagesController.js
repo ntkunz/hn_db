@@ -21,8 +21,8 @@ exports.index = async (req, res) => {
 exports.newMessage = async (req, res) => {
 	try {
 		const newMessage = await knex("messages").insert({
-			user_id: req.body.user_id,
-			other_id: req.body.other_id,
+			sender_id: req.body.senderId,
+			receiver_id: req.body.receiverId,
 			message: req.body.message,
 		});
 		res.status(200).send(newMessage);
