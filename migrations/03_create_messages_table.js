@@ -8,6 +8,7 @@ exports.up = function (knex) {
         table.uuid('sender_id').notNullable();
         table.uuid('receiver_id').notNullable();
         table.string('message').notNullable();;
+        table.integer('unix_timestamp').notNullable();
         table.timestamps(true, true);
     });
 };

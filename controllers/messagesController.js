@@ -24,6 +24,7 @@ exports.newMessage = async (req, res) => {
 			sender_id: req.body.senderId,
 			receiver_id: req.body.receiverId,
 			message: req.body.message,
+			unix_timestamp: Math.floor(Date.now() / 1000),
 		});
 		res.status(200).send(newMessage);
 	} catch (err) {
