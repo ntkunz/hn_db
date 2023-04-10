@@ -12,6 +12,9 @@ exports.up = function (knex) {
       table.string('password').notNullable();
       table.string('image_url').nullable();
       table.string('status').notNullable();
+      table.string('home').notNullable();
+      table.string('city').notNullable();
+      table.string('province').notNullable();
       table.string('address').notNullable();
       table.string('about').notNullable();
       table.point('location').notNullable();
