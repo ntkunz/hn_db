@@ -9,12 +9,12 @@ exports.seed = function (knex) {
     .then(() => {
         return knex("users").insert(userData);
     })
-    // .then(() => {
-    //     return knex("messages").del();
-    // })
-    // .then(() => {
-    //     return knex("messages").insert(messages);
-    // })
+    .then(() => {
+        return knex("messages").del();
+    })
+    .then(() => {
+        return knex("messages").insert(messages);
+    })
     // .then(() => {
     //     return knex("skills").del();
     // })

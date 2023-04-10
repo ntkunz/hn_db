@@ -32,12 +32,11 @@ exports.index = async (req, res) => {
 //working on getting all neighbors based off of logged in user location
 exports.getNeighbors = async (req, res) => {
 	try {
-		console.log(req.body.x);
-		let userLocation = req.body;
 
 		//THIS WORKS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!	
 		const neighbors = await knex("users")
-		.fromRaw("users where st_distance_sphere(st_geomfromtext(st_aswkt(location), 0), st_geomfromtext('POINT("+req.body.x+" "+req.body.y+")', 0)) < 100;")
+		// .fromRaw("users where st_distance_sphere(st_geomfromtext(st_aswkt(location), 0), st_geomfromtext('POINT("+req.body.x+" "+req.body.y+")', 0)) < 100;")
+		.fromRaw("users where st_distance_sphere(st_geomfromtext(st_aswkt(location), 0), st_geomfromtext('POINT("+req.body.userLocation.x+" "+req.body.userLocation.y+")', 0)) < 500;")
 		if (neighbors) {
 			// console.log(neighbors);
 			res.status(200).json(neighbors);
