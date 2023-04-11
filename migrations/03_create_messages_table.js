@@ -7,7 +7,7 @@ exports.up = function (knex) {
         table.increments('id').primary();
         table.uuid('sender_id').notNullable();
         table.uuid('receiver_id').notNullable();
-        table.string('message').notNullable();;
+        table.string('message', 2000).notNullable();;
         table.integer('unix_timestamp').notNullable();
         table.timestamps(true, true);
     });
