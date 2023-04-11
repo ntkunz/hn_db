@@ -52,6 +52,8 @@ exports.getUserSkills = async (req, res) => {
 		const userSkills = await knex("users")
 			.innerJoin("userskills", "users.user_id", "=", "userskills.user_id")
 			.select("userskills.skill", "userskills.offer")
+			// maybe change out this where query with getNeighbors query?!
+			//and remove user_id query, to return all skills within 1/2 km of user
 			.where("users.user_id", req.params.id);
 		res.json(userSkills);
 	} catch (err) {
