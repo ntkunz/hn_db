@@ -25,6 +25,20 @@ exports.newUser = async (req, res) => {
 	}
 };
 
+//edit a user's skills to userskills table
+exports.editUser = async (req, res) => {
+	try {
+		await knex("userskills").where("user_id", req.body.user_id).first().update({
+			user_id: req.body.user_id,
+			skill: req.body.skill,
+			offer: req.body.offer,
+		})
+		res.status(200).send("User skills updated");
+	} catch (err) {
+		res.status(400).send(`Error editing user skills ${err}`);
+	}
+}
+
 
 
 

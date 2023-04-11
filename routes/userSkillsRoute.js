@@ -6,4 +6,8 @@ router
 .get(userSkillsController.index)
 .post(userSkillsController.newUser);
 
+router
+.route('/editskills')
+.post(userSkillsController.editUser)
+
 module.exports = router;

@@ -86,5 +86,29 @@ exports.newUser = async (req, res) => {
 	}
 }
 
-
+//edit a user's information
+exports.editUser = async (req, res) => {
+	try {
+		await knex("users").where("user_id", req.body.user_id).first().update({
+			user_id: req.body.user_id,
+			about: req.body.about,
+			email: req.body.email,
+			first_name: req.body.first_name,
+			last_name: req.body.last_name,
+			location: knex.raw('POINT(?, ?)', [req.body.coords[0], req.body.coords[1]]),
+			password: req.body.password,
+			image_url: req.body.image_url,
+			status: req.body.status,
+			home: req.body.home,
+			city: req.body.city,
+			province: req.body.province,
+			address: req.body.address,
+		})
+		const editedUser = await knex("users").where("user_id", req.body.user_id).first();
+		res.json(editedUser);
+	} catch (err) {
+		console.error(err);
+		res.status(400).send(`Error editing user ${err}`);
+	}
+}
 
