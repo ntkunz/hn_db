@@ -16,7 +16,7 @@ exports.up = function (knex) {
       table.string('city').notNullable();
       table.string('province').notNullable();
       table.string('address').notNullable();
-      table.string('about', 300).notNullable();
+      table.string('about', 240).notNullable();
       table.point('location').notNullable();
       table.timestamps(true, true);
     });
