@@ -7,7 +7,7 @@ router
 .post(userSkillsController.newUser);
 
 router
-.route('/editskills')
-.post(userSkillsController.editUser)
+.route('/:id')
+.delete(userSkillsController.removeSkills);
 
 module.exports = router;
