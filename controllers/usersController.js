@@ -114,3 +114,19 @@ exports.editUser = async (req, res) => {
 	}
 }
 
+//currently adding image that is returned as blob... fix that!
+exports.addImage = async (req, res) => {
+	// console.log(req.body)
+	try {
+		await knex("users").where("user_id", req.body.user_id).first().update({
+			image: req.body.image.toString('base64'),
+		})
+		const editedUser = await knex("users").where("user_id", req.body.user_id).first();
+		res.json(editedUser);
+		console.log(editedUser.image)
+	} catch (err) {
+		console.error(err);
+		res.status(400).send(`Error adding image ${err}`);
+	}
+}
+

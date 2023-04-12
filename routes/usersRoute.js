@@ -18,8 +18,8 @@ router
 .route("/skills/:id")
 .get(usersController.getUserSkills);
 
-// router
-// .route("/neighbors/:id")
-// .get(usersController.getNeighbors); 
+router
+.route("/image")
+.put(usersController.addImage); 
 
 module.exports = router;

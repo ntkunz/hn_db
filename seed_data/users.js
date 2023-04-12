@@ -1,3 +1,5 @@
+const { urlencoded } = require("express");
+
 const knex = require("knex")(require("../knexfile"));
 
 module.exports = [

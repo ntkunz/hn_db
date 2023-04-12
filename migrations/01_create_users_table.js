@@ -11,6 +11,7 @@ exports.up = function (knex) {
       table.string('email').notNullable();
       table.string('password').notNullable();
       table.string('image_url').nullable();
+      table.binary('image');
       table.string('status').notNullable();
       table.string('home').notNullable();
       table.string('city').notNullable();
