@@ -15,6 +15,12 @@ exports.seed = function (knex) {
     .then(() => {
         return knex("messages").insert(messages);
     })
+    // .then(() => {
+    //     return knex("skills").del();
+    // })
+    // .then(() => {
+    //     return knex("skills").insert(skills);
+    // })
     .then(() => {
         return knex("userskills").del();
     })

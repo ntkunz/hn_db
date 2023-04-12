@@ -18,4 +18,8 @@ router
 .route("/skills/:id")
 .get(usersController.getUserSkills);
 
+// router
+// .route("/neighbors/:id")
+// .get(usersController.getNeighbors); 
+
 module.exports = router;
