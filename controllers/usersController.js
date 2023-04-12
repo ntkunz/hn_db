@@ -1,5 +1,7 @@
 const knex = require("knex")(require("../knexfile"));
 
+
+
 exports.index = async (req, res) => {
 	try {
 		// console.log(req.body.email)
@@ -115,18 +117,50 @@ exports.editUser = async (req, res) => {
 }
 
 //currently adding image that is returned as blob... fix that!
-exports.addImage = async (req, res) => {
-	// console.log(req.body)
-	try {
-		await knex("users").where("user_id", req.body.user_id).first().update({
-			image: req.body.image.toString('base64'),
-		})
-		const editedUser = await knex("users").where("user_id", req.body.user_id).first();
-		res.json(editedUser);
-		console.log(editedUser.image)
-	} catch (err) {
-		console.error(err);
-		res.status(400).send(`Error adding image ${err}`);
-	}
-}
+// exports.addImage = async (req, res) => {
+// 	console.log(req.body)
+// 	try {
+// 		await knex("users").where("user_id", req.body.user_id).update({
 
+// 			image: req.body
+
+// 		})
+// 		const editedUser = await knex("users").where("user_id", req.body.user_id).first();
+// 		console.log(editedUser).image
+// 		// res.json(req.body.image.toString('base64'));
+
+// 	} catch (err) {
+// 		console.error(err);
+// 		res.status(400).send(`Error adding image ${err}`);
+// 	}
+// }
+
+// app.post('/image', upload.single('file'), function (req, res) {
+// 	res.json({})
+//   })
+
+// exports.editUser = async (req, res) => {
+// 	try {
+// 		await knex("users").where("user_id", req.body.user_id).first().update({
+// 	}
+// 	// axios.post("/", upload.single("image"), (req, res) => {
+//     if (!req.body.title) {
+//       res.status(400).send("Missing title");
+//     } else if (!req.body.description) {
+//       res.status(400).send("Missing description");
+//     }
+
+
+	exports.addImage = async (req, res) => {
+		console.log('req.body: ', req.body)
+		console.log('req.file: ', req.file)
+		const imageData = req.body.imageData; // Extract the image data from the request body
+		try {
+		  await knex("users").where("user_id", req.body.user_id).update({ image_url: req.file.filename }); // Insert the image data into the database using Knex
+		//   await knex("users").where("user_id", req.body.user_id).insert({ image: imageData }); // Insert the image data into the database using Knex
+		  res.status(200).json({ message: 'Image uploaded successfully' }); // Send a success response back to the client
+		} catch (err) {
+		  console.error(err);
+		  res.status(500).json({ error: err.message }); // Send an error response back to the client
+		}
+	  };

@@ -1,5 +1,20 @@
 const router = require('express').Router();
 const usersController = require('../controllers/usersController.js');
+const multer  = require('multer')
+
+
+let storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, "./public/images/");
+    },
+    filename: function (req, file, cb) {
+    //   let extArray = file.mimetype.split("/");
+    //   let extension = extArray[extArray.length - 1];
+      cb(null, file.originalname);
+    },
+  });
+
+  const upload = multer({ storage: storage });
 
 router
 .route('/')
@@ -12,7 +27,7 @@ router
 
 router
 .route('/edituser')
-.post(usersController.editUser)
+.post(usersController.editUser);
 
 router
 .route("/skills/:id")
@@ -20,6 +35,6 @@ router
 
 router
 .route("/image")
-.put(usersController.addImage); 
+.post(upload.single('file'), usersController.addImage); 
 
 module.exports = router;
