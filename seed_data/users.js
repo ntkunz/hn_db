@@ -13,7 +13,7 @@ module.exports = [
       city: 'vancouver',
       province: 'british columbia',
       address: "455 granville st, vancouver, bc, canada",
-      about: "My name is Bart, and I've lived in the neighborhood for all of my life. I like to skateboard and paint graffiti (sorry if I've tagged your place before). I'm excited to help with any maintenance around your place in exchange for baked goods.",
+      about: "My name is Bart, and I've lived in the neighborhood for all of my life. I like to skateboard and paint graffiti (sorry if I've tagged your place before). Let's connect and wash each others' backs, as the expression goes.",
       location: knex.raw('Point(-123.11466013373249,49.28510303821817)')
     },
     {
@@ -28,7 +28,7 @@ module.exports = [
       city: 'vancouver',
       province: 'british columbia',
       address: "440 granville st, vancouver, bc, canada",
-      about: "Hi everyone, Lisa here! I love to cook and bake, and I'm excited to help out with any cooking or baking needs you may have. I'm also a big fan of gardening, so I'm happy to help out with any gardening needs you may have.",
+      about: "Hi everyone, Lisa here! I love to play my saxophone and get good grades at school, and I'm excited to help out with any needs you may have. I'm also interested in meeting you all and sharing experiences.",
       location: knex.raw('Point(-123.11421962221165,49.28494009469127)')
     },
     {
@@ -43,7 +43,7 @@ module.exports = [
       city: 'vancouver',
       province: 'british columbia',
       address: "757 w hastings, vancouver, bc, canada",
-      about: "How-didilly-doo neighbors. I look forward to meeting you all and exchanging our blessed neighborhood.",
+      about: "How-didilly-doo neighbors. I look forward to meeting you all and making our blessed neighborhood that much more blessed.",
       location: knex.raw('point(-123.11455548945395,49.285493272008466)')
     },
     {
@@ -58,7 +58,7 @@ module.exports = [
       city: 'spokane',
       province: 'washington',
       address: "3228 east 23rd, Spokane, Wa, USA, 99223",
-      about: "Brendan here. I love making movies and music videos. None of the categories fit my skillset but if you'd like some video work done, I'm your guy. I'd love to get access to some new shooting locations in return.",
+      about: "Brendan here. I love making movies and music videos with my friends. If you'd like some video work done, I'm your guy. I'd love to get access to some new shooting locations around the neighborhood if you have any. Thanks.",
       location: knex.raw('point(-117.36181915092484,47.633491232890755)')
     },
   ];
