@@ -6,4 +6,8 @@ router
 .get(userSkillsController.index)
 .post(userSkillsController.newUser);
 
+router
+.route('/:id')
+.delete(userSkillsController.removeSkills);
+
 module.exports = router;

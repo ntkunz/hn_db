@@ -11,11 +11,15 @@ router
 .post(usersController.newUser);
 
 router
+.route('/edituser')
+.post(usersController.editUser)
+
+router
 .route("/skills/:id")
 .get(usersController.getUserSkills);
 
 // router
 // .route("/neighbors/:id")
-// .get(usersController.getNeighbors);
+// .get(usersController.getNeighbors); 
 
 module.exports = router;
