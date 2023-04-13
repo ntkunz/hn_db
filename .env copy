@@ -1,0 +1,5 @@
+PORT = 8080
+DB_LOCAL_DBNAME = hn_db
+DB_LOCAL_USER = *your mysql username here*
+DB_LOCAL_PASSWORD = *your mysql database password here*
+CORS_ORIGIN = http://localhost:3000

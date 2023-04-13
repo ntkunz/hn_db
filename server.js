@@ -6,6 +6,7 @@ const PORT = process.env.PORT || 8080
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static('public/images'));
 
 const userRoutes = require('./routes/usersRoute');
 const userSkillsRoutes = require('./routes/userSkillsRoute');
