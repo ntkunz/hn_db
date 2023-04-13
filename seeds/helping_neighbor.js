@@ -1,9 +1,9 @@
 const userData = require("../seed_data/users");
 const messages = require("../seed_data/messages");
 const skills = require("../seed_data/skills");
-const userSkills = require("../seed_data/userSkills");
+const userskills = require("../seed_data/userskills");
 
-esports.seed = function (knex) {
+exports.seed = function (knex) {
     return knex("users")
     .del()
     .then(() => {
@@ -16,15 +16,9 @@ esports.seed = function (knex) {
         return knex("messages").insert(messages);
     })
     .then(() => {
-        return knex("skills").del();
+        return knex("userskills").del();
     })
     .then(() => {
-        return knex("skills").insert(skills);
-    })
-    .then(() => {
-        return knex("userSkills").del();
-    })
-    .then(() => {
-        return knex("userSkills").insert(userSkills);
+        return knex("userskills").insert(userskills);
     });
 };
