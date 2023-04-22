@@ -27,7 +27,6 @@ exports.newUser = async (req, res) => {
 
 //remove a user's skills from userskills table
 exports.removeSkills = async (req, res) => {
-	console.log('req.params.id: ', req.params.id)
 	try {
 		await knex("userskills").where("user_id", req.params.id).del();
 		res.status(200).send("User skills removed");
