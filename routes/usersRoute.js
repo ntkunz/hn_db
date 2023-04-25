@@ -38,6 +38,11 @@ router
 // .route("/skills/:id")
 // .get(usersController.getUserSkills);
 
+
+// router
+// .route("/skills/")
+// .post(usersController.getUserSkills);
+
 router
 .route("/image")
 .post(upload.single('file'), usersController.addImage); 
