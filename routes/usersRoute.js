@@ -23,7 +23,7 @@ let storage = multer.diskStorage({
 
 router
 .route('/')
-.put(usersController.getNeighbors)
+// .put(usersController.getNeighbors)
 .post(usersController.index);
 
 router
@@ -34,9 +34,9 @@ router
 .route('/edituser')
 .post(usersController.editUser);
 
-router
-.route("/skills/:id")
-.get(usersController.getUserSkills);
+// router
+// .route("/skills/:id")
+// .get(usersController.getUserSkills);
 
 router
 .route("/image")
