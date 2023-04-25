@@ -4,7 +4,6 @@ const knex = require("knex")(require("../knexfile"));
 // return single user based on email
 exports.index = async (req, res) => {
 	try {
-		// console.log(req.body.email)
 		const foundUser = await knex("users").where({ email: req.body.email });
 		if (foundUser) {
 			res.status(200).json(foundUser);
