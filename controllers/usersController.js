@@ -8,16 +8,38 @@ exports.index = async (req, res) => {
 		if (foundUser) {
 			//if found user, find all neighbors within 1/2 km as neighbors
 			const neighbors = await knex("users")
-			//join userskills table and users table on user_id
-			.join("userskills", "users.user_id", "=", "userskills.user_id")
-			//select all columns from users table and select all skills and offers from userskills table labeled as barters
-			.select('users.user_id', 'users.about', 'users.email', 'users.first_name', 'users.last_name', 'users.location', 'users.image_url', 'users.status', 'users.home', 'users.city', 'users.province', 'users.address')
-			.select(knex.raw('JSON_OBJECTAGG(userskills.skill, userskills.offer) as barters'))
-			.whereRaw("st_distance_sphere(st_geomfromtext(st_aswkt(location), 0), st_geomfromtext('POINT("+foundUser[0].location.x+" "+foundUser[0].location.y+")', 0)) < 500")
-			.groupBy('users.user_id')
-			res.status(200).json(neighbors);	
-	
-	}
+				//join userskills table and users table on user_id
+				.join("userskills", "users.user_id", "=", "userskills.user_id")
+				//select all columns from users table and select all skills and offers from userskills table labeled as barters
+				.select(
+					"users.user_id",
+					"users.about",
+					"users.email",
+					"users.first_name",
+					"users.last_name",
+					"users.location",
+					"users.image_url",
+					"users.status",
+					"users.home",
+					"users.city",
+					"users.province",
+					"users.address"
+				)
+				.select(
+					knex.raw(
+						"JSON_OBJECTAGG(userskills.skill, userskills.offer) as barters"
+					)
+				)
+				.whereRaw(
+					"st_distance_sphere(st_geomfromtext(st_aswkt(location), 0), st_geomfromtext('POINT(" +
+						foundUser[0].location.x +
+						" " +
+						foundUser[0].location.y +
+						")', 0)) < 500"
+				)
+				.groupBy("users.user_id");
+			res.status(200).json(neighbors);
+		}
 	} catch (err) {
 		console.error(err);
 		res.status(400).send(`Error getting user ${err}`);
