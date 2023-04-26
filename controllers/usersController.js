@@ -1,97 +1,28 @@
 const knex = require("knex")(require("../knexfile"));
 
-// // return single user based on email and all neighbors from users database
+//return user who logged in and all neighbors and skills for those neighbors
 exports.index = async (req, res) => {
 	try {
+		//find user who logged in
 		const foundUser = await knex("users").where({ email: req.body.email });
 		if (foundUser) {
-			console.log('fownduzer', foundUser[0].location.x)
+			//if found user, find all neighbors within 1/2 km as neighbors
 			const neighbors = await knex("users")
+			//join userskills table and users table on user_id
 			.join("userskills", "users.user_id", "=", "userskills.user_id")
-			// .fromRaw(
-				//good for preventing sql injection!!
-				// "users where st_distance_sphere(st_geomfromtext(st_aswkt(location), 0), st_geomfromtext('POINT(?, ?)', 0)) < 500;", [foundUser[0].location.x, foundUser[0].location.y]
-			// );
-
-			//works!!
-		.whereRaw("st_distance_sphere(st_geomfromtext(st_aswkt(location), 0), st_geomfromtext('POINT("+foundUser[0].location.x+" "+foundUser[0].location.y+")', 0)) < 500;")
-		
-		// .whereRaw("st_distance_sphere(st_geomfromtext(st_aswkt(location), 0), st_geomfromtext('POINT(?, ?)', 0)) < 500;", [foundUser[0].location.x, foundUser[0].location.y] )
-	
-		console.log('neighbors: ', neighbors)
-		res.status(200).json(neighbors);	
+			//select all columns from users table and select all skills and offers from userskills table labeled as barters
+			.select('users.user_id', 'users.about', 'users.email', 'users.first_name', 'users.last_name', 'users.location', 'users.image_url', 'users.status', 'users.home', 'users.city', 'users.province', 'users.address')
+			.select(knex.raw('JSON_OBJECTAGG(userskills.skill, userskills.offer) as barters'))
+			.whereRaw("st_distance_sphere(st_geomfromtext(st_aswkt(location), 0), st_geomfromtext('POINT("+foundUser[0].location.x+" "+foundUser[0].location.y+")', 0)) < 500")
+			.groupBy('users.user_id')
+			res.status(200).json(neighbors);	
 	
 	}
-		// console.log('neighbors: ', neighbors)
-		// res.status(200).json(neighbors);
 	} catch (err) {
 		console.error(err);
 		res.status(400).send(`Error getting user ${err}`);
 	}
 };
-
-
-
-// // // get skills for neighbors
-// exports.getUserSkills = async (req, res) => {
-// 	console.log('wreckdotbody', req.body)
-// 	try {
-// 		const userSkills = await knex("users")
-// 			.innerJoin("userskills", "users.user_id", "=", "userskills.user_id")
-// 			.select("*")
-// 			// .where('users.user_id', 'userskills.user_id')
-			
-// 			console.log('userSkills: ', userSkills)
-// 			res.json(userSkills);
-		
-// 	} catch (err) {
-// 		console.error(err);
-// 		res.status(400).send(`Error finding item ${req.params.id} ${err}`);
-// 	}
-// };
-
-
-//==========================everything below this is working! attempt to refactor above==========================
-// // return single user based on email
-// exports.index = async (req, res) => {
-// 	try {
-// 		const foundUser = await knex("users").where({ email: req.body.email });
-// 		if (foundUser) {
-// 			res.status(200).json(foundUser);
-// 		}
-// 	} catch (err) {
-// 		console.error(err);
-// 		res.status(400).send(`Error getting user ${err}`);
-// 	}
-// };
-
-// //working on getting all neighbors based off of logged in user location
-// exports.getNeighbors = async (req, res) => {
-// 	try {
-// 		const neighbors = await knex("users")
-// 		.fromRaw("users where st_distance_sphere(st_geomfromtext(st_aswkt(location), 0), st_geomfromtext('POINT("+req.body.userLocation.x+" "+req.body.userLocation.y+")', 0)) < 500;")
-// 		if (neighbors) {
-// 			res.status(200).json(neighbors);
-// 		}
-// 	} catch (err) {
-// 		console.error(err);
-// 		res.status(400).send(`Error getting neighbors ${err}`);
-// 	}
-// };
-
-// // get skills for neighbors
-// exports.getUserSkills = async (req, res) => {
-// 	try {
-// 		const userSkills = await knex("users")
-// 			.innerJoin("userskills", "users.user_id", "=", "userskills.user_id")
-// 			.select("userskills.skill", "userskills.offer")
-// 			.where("users.user_id", req.params.id);
-// 		res.json(userSkills);
-// 	} catch (err) {
-// 		console.error(err);
-// 		res.status(400).send(`Error finding item ${req.params.id} ${err}`);
-// 	}
-// };
 
 //create a new user
 exports.newUser = async (req, res) => {
