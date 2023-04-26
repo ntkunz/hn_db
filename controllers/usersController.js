@@ -23,7 +23,8 @@ exports.index = async (req, res) => {
 					"users.home",
 					"users.city",
 					"users.province",
-					"users.address"
+					"users.address",
+					"users.created_at",
 				)
 				.select(
 					knex.raw(
