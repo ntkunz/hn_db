@@ -113,7 +113,7 @@ exports.editUser = async (req, res) => {
 };
 
 exports.addImage = async (req, res) => {
-	const imageData = req.body.imageData; // Extract the image data from the request body
+	// const imageData = req.body.imageData; // Extract the image data from the request body
 	try {
 		await knex("users")
 			.where("user_id", req.body.user_id)
