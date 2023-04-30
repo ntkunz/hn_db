@@ -23,13 +23,3 @@ exports.removeSkills = async (req, res) => {
 		res.status(400).send(`Error removing user skills ${err}`);
 	}
 }
-
-
-
-
-
-
-
-
-
-
