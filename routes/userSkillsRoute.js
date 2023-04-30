@@ -3,7 +3,6 @@ const userSkillsController = require('../controllers/userSkillsController.js');
 
 router
 .route('/')
-.get(userSkillsController.index)
 .post(userSkillsController.newUser);
 
 router
