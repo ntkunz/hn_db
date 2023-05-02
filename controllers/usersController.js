@@ -43,7 +43,6 @@ exports.index = async (req, res) => {
 			res.status(200).json(neighbors);
 		}
 	} catch (err) {
-		console.error('get user err: ', err);
 		res.status(404).send(`Error getting user ${err}`);
 	}
 };
