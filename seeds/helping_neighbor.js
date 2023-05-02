@@ -1,6 +1,5 @@
 const userData = require("../seed_data/users");
 const messages = require("../seed_data/messages");
-const skills = require("../seed_data/skills");
 const userskills = require("../seed_data/userskills");
 
 exports.seed = function (knex) {
