@@ -5,7 +5,8 @@ exports.index = async (req, res) => {
 	try {
 		//find user who logged in
 		const foundUser = await knex("users").where({ email: req.body.email });
-		if (foundUser) {
+		if (foundUser.length === 0) {res.status(404).send(`No user found with email ${req.body.email}`)}
+		else {
 			//if found user, find all neighbors within 1/2 km as neighbors
 			const neighbors = await knex("users")
 				//join userskills table and users table on user_id
@@ -42,8 +43,8 @@ exports.index = async (req, res) => {
 			res.status(200).json(neighbors);
 		}
 	} catch (err) {
-		console.error(err);
-		res.status(400).send(`Error getting user ${err}`);
+		console.error('get user err: ', err);
+		res.status(404).send(`Error getting user ${err}`);
 	}
 };
 
