@@ -1,10 +1,12 @@
 const knex = require("knex")(require("./knexfile"));
-const express = require('express');
 const cors = require('cors');
+const helmet = require("helmet");
+const bcrypt = require("bcryptjs");
+const rateLimit = require("express-rate-limit");
+const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 8080
-const helmet = require("helmet");
-const rateLimit = require("express-rate-limit");
+
 
 const limiter = rateLimit({
 	// windowMs: 15 * 60 * 1000, // 15 minutes
@@ -19,6 +21,11 @@ app.use(express.json());
 app.use(express.static('public/images'));
 app.use(helmet());
 app.use(limiter);
+app.use(
+	express.urlencoded({
+		extended: true,
+	})
+)
 
 const userRoutes = require('./routes/usersRoute');
 const userSkillsRoutes = require('./routes/userSkillsRoute');
