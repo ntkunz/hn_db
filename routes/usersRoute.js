@@ -21,18 +21,28 @@ let storage = multer.diskStorage({
     limits: { fileSize: maxSize }
   });
 
+  //post request to get all nearby users
 router
 .route('/')
 // .put(usersController.getNeighbors)
 .post(usersController.index);
 
+//post request to add new user
 router
 .route('/newuser')
 .post(usersController.newUser);
 
+//post request to edit user information
 router
 .route('/edituser')
 .post(usersController.editUser);
+
+//emailcheck to check if email exists in database
+//DISABLED TO SHOW NOAH DEMO
+router
+.route('/newemail')
+.post(usersController.newEmail);
+
 
 // router
 // .route("/skills/:id")
