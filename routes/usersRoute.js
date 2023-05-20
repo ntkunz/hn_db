@@ -37,8 +37,7 @@ router
 .route('/edituser')
 .post(usersController.editUser);
 
-//emailcheck to check if email exists in database
-//DISABLED TO SHOW NOAH DEMO
+//newEmail to check if email exists in database
 router
 .route('/newemail')
 .post(usersController.newEmail);

@@ -17,25 +17,12 @@ exports.index = async (req, res) => {
 		//find user who logged in
 		const foundUser = await knex("users").where(whereClause);
 
-		console.log({ foundUser });
-		console.log("user pw: ", foundUser[0].password)
-		console.log("req.body: ", req.body)
-
 		if (foundUser.length === 0) {
 			// Do not return 404, because that would leak information about whether a given email is registered or not.
-			// return res.status(404).send(`No user found with email ${req.body.email}`);
 			return res.status(404).send(`Credentials Wrong`);
 		} 
-		// const match = await bcrypt.compareSync(req.body.password, hashedPassword)
-		// console.log("test: ", bcrypt.compareSync(req.body.password, foundUser.password))
-		// if (foundUser[0].password !== req.body.password) {
-		// if (!match) {
-		// 	return res.status(404).send(`Credentials Wrong`);
-		// }
 			//if found user, find all neighbors within 1/2 km as neighbors
 			const neighbors = await knex("users")
-				//join userskills table and users table on user_id
-				// .join("userskills", "users.user_id", "=", "userskills.user_id")
 				.join(joinClause.table, joinClause.joinCondition)
 				//select all columns from users table and select all skills and offers from userskills table labeled as barters
 
@@ -106,15 +93,6 @@ exports.newUser = async (req, res) => {
 		at least one uppercase letter, one lowercase letter, one number and one special character`);
 	}
 
-	// SALT AND HASH PASSWORD
-	const salt = await bcrypt.genSalt(10);
-	const hashedPassword = await bcrypt.hash(req.body.password, salt);
-
-	// log hashed 1234 password for testing
-	// console.log("hashed Password1! password: ", hashedPassword)
-	// const match = await bcrypt.compareSync(req.body.password, hashedPassword)
-	// console.log("match: ", match)
-
 	const newUserData = {
 		user_id: req.body.user_id,
 		about: req.body.about,
@@ -122,8 +100,8 @@ exports.newUser = async (req, res) => {
 		first_name: req.body.first_name,
 		last_name: req.body.last_name,
 		location: knex.raw("POINT(?, ?)", [req.body.coords[0], req.body.coords[1]]),
-		password: hashedPassword,
-		// password: req.body.password,
+		// password: hashedPassword,
+		password: req.body.password,
 		image_url: req.body.image_url,
 		status: req.body.status,
 		home: req.body.home,
@@ -143,7 +121,6 @@ exports.newUser = async (req, res) => {
 		
 		// const pwCheck = await bcrypt.compareSync(req.body.password, newUser.password)
 
-		// console.log('new user: ',newUser)
 		res.json(newUser);
 	} catch (err) {
 		console.error(err);
