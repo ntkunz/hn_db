@@ -19,6 +19,7 @@ exports.index = async (req, res) => {
 
 		if (foundUser.length === 0) {
 			// Do not return 404, because that would leak information about whether a given email is registered or not.
+			// Invalid Login might be a better response below
 			return res.status(404).send(`Credentials Wrong`);
 		} 
 			//if found user, find all neighbors within 1/2 km as neighbors
