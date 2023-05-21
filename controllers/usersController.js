@@ -1,7 +1,8 @@
 const knex = require("knex")(require("../knexfile"));
 const bcrypt = require("bcryptjs");
 
-let regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+let emailRregex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
 
 //return user who logged in and all neighbors and skills for those neighbors
 exports.index = async (req, res) => {
@@ -16,6 +17,7 @@ exports.index = async (req, res) => {
 	try {
 		//find user who logged in
 		const foundUser = await knex("users").where(whereClause);
+		console.log(foundUser[0].password)
 
 		if (foundUser.length === 0) {
 			// Do not return 404, because that would leak information about whether a given email is registered or not.
