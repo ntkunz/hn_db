@@ -121,6 +121,7 @@ exports.newUser = async (req, res) => {
 		
 		// const pwCheck = await bcrypt.compareSync(req.body.password, newUser.password)
 
+		// console.log('new user: ',newUser)
 		res.json(newUser);
 	} catch (err) {
 		console.error(err);
