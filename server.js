@@ -27,7 +27,8 @@ app.use(
 	})
 )
 
-const userRoutes = require('./routes/usersRoute');
+const userRoutes = require('./routes/usersRouteTwo');
+// const userRoutes = require('./routes/usersRoute');
 const userSkillsRoutes = require('./routes/userSkillsRoute');
 const messageRoutes = require('./routes/messagesRoute');
 
