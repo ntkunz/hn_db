@@ -5,7 +5,8 @@ const bcrypt = require("bcryptjs");
 const rateLimit = require("express-rate-limit");
 const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 8080
+const PORT = process.env.PORT || 8080;
+const { protect } = require("./modules/auth");
 
 
 const limiter = rateLimit({

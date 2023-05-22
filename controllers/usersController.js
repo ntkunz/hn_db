@@ -1,5 +1,7 @@
 const knex = require("knex")(require("../knexfile"));
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const { createJWT, comparePasswords, hashPassword } = require("../modules/auth");
 
 let emailRregex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
@@ -85,16 +87,17 @@ exports.newEmail = async (req, res) => {
 //create a new user
 exports.newUser = async (req, res) => {
 
-	// Confirm passwords match
-	if (req.body.password !== req.body.passwordConfirm) {
-		return res.status(404).send(`Passwords do not match`);
-	}
-
 	// Confirm password meets requirements
-	if (req.body.password.length < 8 || !regex.test(req.body.password)) {
+	if (req.body.password.length < 8 || !passwordRegex.test(req.body.password)) {
 		return res.status(404).send(`Password must be at least 8 characters and contain 
 		at least one uppercase letter, one lowercase letter, one number and one special character`);
 	}
+
+	//create hashed password
+	// const salt = await bcrypt.genSalt(10);
+	// const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
+	const hashedPassword = await hashPassword(req.body.password)
 
 	const newUserData = {
 		user_id: req.body.user_id,
@@ -103,8 +106,8 @@ exports.newUser = async (req, res) => {
 		first_name: req.body.first_name,
 		last_name: req.body.last_name,
 		location: knex.raw("POINT(?, ?)", [req.body.coords[0], req.body.coords[1]]),
-		// password: hashedPassword,
-		password: req.body.password,
+		password: hashedPassword,
+		// password: req.body.password,
 		image_url: req.body.image_url,
 		status: req.body.status,
 		home: req.body.home,
@@ -113,19 +116,23 @@ exports.newUser = async (req, res) => {
 		address: req.body.address,
 	};
 
-	//CAN CHECK HERE IF USER EXISTS... INSTEAD OF EARLIER IN THE FUNCTION, THOUGH IT WILL 
-	// STILL CALL THE LOCATION API UNNECESSARILY BEFORE THIS STEP IF I DO IT HERE AND IT FAILS
-
 	try {
 		await knex("users").insert(newUserData);
 
-		const whereClause = { email: req.body.email};
+		const whereClause = { email: req.body.email };
 		const newUser = await knex("users").where(whereClause).first();
-		
+
 		// const pwCheck = await bcrypt.compareSync(req.body.password, newUser.password)
 
-		// console.log('new user: ',newUser)
-		res.json(newUser);
+		//should I need to return a jwt token here?
+		//should I need to get the neighbors here?
+
+		// Create and assign a token
+		const token = createJWT(newUser)
+		
+		// return user and auth token with user_id to client
+		res.status(200).json({ token: token, user: newUser });
+
 	} catch (err) {
 		console.error(err);
 		return res.status(400).send(`Error adding new user ${err}`);
