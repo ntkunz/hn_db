@@ -32,6 +32,10 @@ router
 .route('/newuser')
 .post(usersController.newUser);
 
+router
+.route('/verify')
+.get(usersController.verifyUser);
+
 //post request to edit user information
 router
 .route('/edituser')
