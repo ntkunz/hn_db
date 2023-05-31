@@ -27,6 +27,14 @@ router
 // .put(usersController.getNeighbors)
 .post(usersController.index);
 
+router
+.route('/getneighbors')
+.get(usersController.getNeighbors);
+
+router
+.route('/login')
+.post(usersController.login);
+
 //post request to add new user
 router
 .route('/newuser')
