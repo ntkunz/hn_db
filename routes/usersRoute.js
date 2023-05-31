@@ -22,10 +22,10 @@ let storage = multer.diskStorage({
   });
 
   //post request to get all nearby users
-router
-.route('/')
-// .put(usersController.getNeighbors)
-.post(usersController.index);
+// router
+// .route('/')
+// // .put(usersController.getNeighbors)
+// .post(usersController.index);
 
 router
 .route('/getneighbors')

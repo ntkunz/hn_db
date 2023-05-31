@@ -2,10 +2,11 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 // Create jwt token based off of user including email
-const createJWT = (email) => {
+const createJWT = (email, location) => {
 	const token = jwt.sign(
 		{
 			email: email,
+			location: location,
 		},
 		process.env.JWT_SECRET,
 		{ expiresIn: process.env.JWT_EXPIRES_IN }
@@ -52,23 +53,36 @@ const comparePasswords = (password, hash) => {
 };
 
 // retrieve email from token when user returns to site and token present
-const getEmailFromToken = (token) => {
+
+const getInfoFromToken = (token) => {
 	try {
 		const tokenObject = JSON.parse(token); // Parse the JSON string into an object
 		const tokenValue = tokenObject.userToken; // Access the 'userToken' property from the object
-	  const decoded = jwt.verify(tokenValue, process.env.JWT_SECRET);
-	  return decoded;
+
+		try {
+			const decoded = jwt.verify(tokenValue, process.env.JWT_SECRET);
+			return decoded;
+		} catch (error) {
+			// Check for the specific error indicating an invalid signature
+			if (
+				error instanceof jwt.JsonWebTokenError &&
+				error.message === "invalid signature"
+			) {
+				return { error: "Invalid token signature" };
+			} else {
+				throw error; // Re-throw the error if it's not the expected error
+			}
+		}
 	} catch (err) {
-	  console.error("Error decoding token:", err);
-	  //return error
-	  return err;
+		console.error("Error decoding token:", err);
+		return { error: "Invalid token format" };
 	}
- };
+};
 
 module.exports = {
 	createJWT,
 	protect,
 	comparePasswords,
 	hashPassword,
-	getEmailFromToken,
+	getInfoFromToken,
 };
