@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const usersController = require('../controllers/usersController.js');
-const multer  = require('multer')
+const multer  = require('multer');
 
 //multer maximum upload size configuration
 const maxSize = 1000000;

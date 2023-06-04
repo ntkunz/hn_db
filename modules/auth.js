@@ -17,6 +17,8 @@ const createJWT = (email, location) => {
 const protect = (req, res, next) => {
 	const bearer = req.headers.authorization;
 
+	// console.log('bearer: ', bearer)
+
 	if (!bearer) {
 		res.status(401);
 		res.json({ message: "not authorized" });
@@ -24,15 +26,23 @@ const protect = (req, res, next) => {
 	}
 
 	const [, token] = bearer.split(" ");
+	const tokenObject = JSON.parse(token);
+	const userToken = tokenObject.userToken;
 
-	if (!token) {
+	if (!userToken) {
 		res.status(401);
 		res.json({ message: "invalid token" });
 		return;
 	}
 
 	try {
-		const user = jwt.verify(token, process.env.JWT_SECRET);
+		//Confirm token is not expired
+		const user = jwt.verify(userToken, process.env.JWT_SECRET);
+		if (user.exp < Date.now() / 1000) {
+			res.status(401);
+			res.json({ message: "token expired" });
+			return;
+		}
 		req.user = user;
 		next();
 	} catch (e) {
