@@ -27,15 +27,20 @@ let storage = multer.diskStorage({
 // // .put(usersController.getNeighbors)
 // .post(usersController.index);
 
+
+//change to just .get/users
 router
 .route('/getneighbors')
 .get(usersController.getNeighbors);
 
+
+//change to .post/login instead of .post/users/login
 router
 .route('/login')
 .post(usersController.login);
 
 //post request to add new user
+//change to .post/users instead of .post/users/newuser
 router
 .route('/newuser')
 .post(usersController.newUser);
@@ -45,11 +50,13 @@ router
 .get(usersController.verifyUser);
 
 //post request to edit user information
+//change to .put/users instead of .post/users/edituser
 router
 .route('/edituser')
 .post(usersController.editUser);
 
 //newEmail to check if email exists in database
+//can I do this as a function in auth.js instead of it being a route?
 router
 .route('/newemail')
 .post(usersController.newEmail);
@@ -64,6 +71,7 @@ router
 // .route("/skills/")
 // .post(usersController.getUserSkills);
 
+//add image to user route
 router
 .route("/image")
 .post(upload.single('file'), usersController.addImage); 

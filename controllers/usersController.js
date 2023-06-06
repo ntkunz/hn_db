@@ -8,8 +8,7 @@ const {
 	getInfoFromToken,
 } = require("../modules/auth");
 
-let emailRregex =
-	/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+let emailRregex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
 
 //NEED TO CREATE A LOGIN ROUTE TO LOG IN A USER, WHICH WOULD BE DONE WITH EMAIL AND PASSWORD
@@ -100,6 +99,7 @@ let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
 // 	}
 // };
 
+//function that gets all neighbors and skills for those neighbors
 exports.getNeighbors = async (req, res) => {
 	//check token sent in header to make sure user authorized
 	const token = req.headers.authorization;
@@ -169,6 +169,7 @@ exports.getNeighbors = async (req, res) => {
 	}
 };
 
+//function that check that a new email is not already in use
 exports.newEmail = async (req, res) => {
 	//check if email exists in database
 	const whereClause = { email: req.body.email };
@@ -320,6 +321,7 @@ exports.editUser = async (req, res) => {
 	}
 };
 
+//login a user
 exports.login = async (req, res) => {
 	const whereClause = { email: req.body.email };
 	const joinClause = {
@@ -391,6 +393,7 @@ exports.login = async (req, res) => {
 	}
 };
 
+//add image to user profile
 exports.addImage = async (req, res) => {
 	//match user_id to user_id in database
 	const whereClause = { user_id: req.body.user_id };

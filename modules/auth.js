@@ -14,6 +14,7 @@ const createJWT = (email, location) => {
 	return token;
 };
 
+//protect routes from unauthorized users
 const protect = (req, res, next) => {
 	const bearer = req.headers.authorization;
 
@@ -53,17 +54,18 @@ const protect = (req, res, next) => {
 	}
 };
 
+//hash password
 const hashPassword = (password) => {
 	const salt = bcrypt.genSaltSync(10);
 	return bcrypt.hash(password, salt);
 };
 
+//compare passwords
 const comparePasswords = (password, hash) => {
 	return bcrypt.compare(password, hash);
 };
 
-// retrieve email from token when user returns to site and token present
-
+// retrieve email from token when user returns to site and valid token is present
 const getInfoFromToken = (token) => {
 	try {
 		const tokenObject = JSON.parse(token); // Parse the JSON string into an object
@@ -89,6 +91,7 @@ const getInfoFromToken = (token) => {
 	}
 };
 
+//export all modules
 module.exports = {
 	createJWT,
 	protect,
