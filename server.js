@@ -33,7 +33,7 @@ const userSkillsRoutes = require('./routes/userSkillsRoute');
 const messageRoutes = require('./routes/messagesRoute');
 
 app.use('/messages', protect, messageRoutes);
-app.use('/users', userRoutes);
+app.use('/users', protect, userRoutes);
 app.use('/userskills', protect, userSkillsRoutes);
 
 app.listen(PORT, () => {

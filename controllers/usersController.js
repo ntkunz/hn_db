@@ -101,6 +101,7 @@ let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
 
 //function that gets all neighbors and skills for those neighbors
 exports.getNeighbors = async (req, res) => {
+	console.log('getting neighbors')
 	//check token sent in header to make sure user authorized
 	const token = req.headers.authorization;
 	// split token to remove bearer
@@ -314,7 +315,11 @@ exports.editUser = async (req, res) => {
 		const editedUser = await knex("users")
 			.where("user_id", req.body.user_id)
 			.first();
-		res.json(editedUser);
+		//create editedUser minus password
+		const { password, ...editedUserWithoutPassword } = editedUser;
+		//return editedUserWithoutPassword to client
+		res.json(editedUserWithoutPassword);
+		// res.json(editedUser);
 	} catch (err) {
 		console.error(err);
 		return res.status(400).send(`Error editing user ${err}`);

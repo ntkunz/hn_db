@@ -15,12 +15,17 @@ const createJWT = (email, location) => {
 };
 
 //protect routes from unauthorized users
-const protect = (req, res, next) => {
+const protect = (req, res, next) => { console.log('protecting')
 	const bearer = req.headers.authorization;
 
 	// console.log('bearer: ', bearer)
 
 	if (!bearer) {
+		//if the route is /users/login, allow access
+		if (req.originalUrl === "/users/login") {
+			next();
+			return;
+		};
 		res.status(401);
 		res.json({ message: "not authorized" });
 		return;
@@ -66,7 +71,7 @@ const comparePasswords = (password, hash) => {
 };
 
 // retrieve email from token when user returns to site and valid token is present
-const getInfoFromToken = (token) => {
+const getInfoFromToken = (token) => { 
 	try {
 		const tokenObject = JSON.parse(token); // Parse the JSON string into an object
 		const tokenValue = tokenObject.userToken; // Access the 'userToken' property from the object
