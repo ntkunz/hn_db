@@ -15,10 +15,8 @@ const createJWT = (email, location) => {
 };
 
 //protect routes from unauthorized users
-const protect = (req, res, next) => { console.log('protecting')
+const protect = (req, res, next) => { 
 	const bearer = req.headers.authorization;
-
-	// console.log('bearer: ', bearer)
 
 	if (!bearer) {
 		//if the route is /users/login, allow access
