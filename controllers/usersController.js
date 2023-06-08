@@ -223,11 +223,60 @@ exports.verifyUser = async (req, res) => {
 				this.on("users.user_id", "=", "userskills.user_id");
 			},
 		};
+
+		//		await knex("users").where(whereClause).first().update(updateData);
+		// const editedUser = await knex("users")
+		// .where("user_id", req.body.user_id)
+		// .join(joinClause.table, joinClause.joinCondition)
+		// .select(
+		// 	"users.user_id",
+		// 	"users.about",
+		// 	"users.email",
+		// 	"users.first_name",
+		// 	"users.last_name",
+		// 	"users.location",
+		// 	"users.image_url",
+		// 	"users.status",
+		// 	"users.home",
+		// 	"users.city",
+		// 	"users.province",
+		// 	"users.address",
+		// 	"users.created_at",
+		// )
+		// .select(
+		// 	knex.raw(
+		// 		"JSON_OBJECTAGG(userskills.skill, userskills.offer) as barters"
+		// 	)
+		// )
+		// .groupBy("users.user_id")
+		// .where(whereClause)
+		// .first();
 		try {
 			//get user and userskills from database from token email
 			const foundUser = await knex("users")
 				.where(whereClause)
-				.join(joinClause.table, joinClause.joinCondition);
+				.join(joinClause.table, joinClause.joinCondition)
+				.select(
+						"users.user_id",
+						"users.about",
+						"users.email",
+						"users.first_name",
+						"users.last_name",
+						"users.location",
+						"users.image_url",
+						"users.status",
+						"users.home",
+						"users.city",
+						"users.province",
+						"users.address",
+						"users.created_at",
+					)
+					.select(
+						knex.raw(
+							"JSON_OBJECTAGG(userskills.skill, userskills.offer) as barters"
+						)
+					)
+					.groupBy("users.user_id");
 			//if email not in use, send 200 status, if email in use, send 202 status
 			if (foundUser.length === 0) {
 				return res
@@ -293,7 +342,13 @@ exports.newUser = async (req, res) => {
 
 //edit a user's information
 exports.editUser = async (req, res) => {
-	const whereClause = { user_id: req.body.user_id };
+	const whereClause = { 'users.user_id': req.body.user_id };
+	const joinClause = {
+		table: "userskills",
+		joinCondition: function () {
+			this.on("users.user_id", "=", "userskills.user_id");
+		}
+	}
 	const updateData = {
 		user_id: req.body.user_id,
 		about: req.body.about,
@@ -301,7 +356,7 @@ exports.editUser = async (req, res) => {
 		first_name: req.body.first_name,
 		last_name: req.body.last_name,
 		location: knex.raw("POINT(?, ?)", [req.body.coords[0], req.body.coords[1]]),
-		password: req.body.password,
+		// password: req.body.password,
 		image_url: req.body.image_url,
 		status: req.body.status,
 		home: req.body.home,
@@ -313,7 +368,30 @@ exports.editUser = async (req, res) => {
 	try {
 		await knex("users").where(whereClause).first().update(updateData);
 		const editedUser = await knex("users")
-			.where("user_id", req.body.user_id)
+			// .where("user_id", req.body.user_id)
+			.join(joinClause.table, joinClause.joinCondition)
+			.select(
+				"users.user_id",
+				"users.about",
+				"users.email",
+				"users.first_name",
+				"users.last_name",
+				"users.location",
+				"users.image_url",
+				"users.status",
+				"users.home",
+				"users.city",
+				"users.province",
+				"users.address",
+				"users.created_at",
+			)
+			.select(
+				knex.raw(
+					"JSON_OBJECTAGG(userskills.skill, userskills.offer) as barters"
+				)
+			)
+			.groupBy("users.user_id")
+			.where(whereClause)
 			.first();
 		//create editedUser minus password
 		const { password, ...editedUserWithoutPassword } = editedUser;
