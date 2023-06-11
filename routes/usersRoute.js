@@ -22,16 +22,18 @@ let storage = multer.diskStorage({
   });
 
   //post request to get all nearby users
-// router
-// .route('/')
-// // .put(usersController.getNeighbors)
+router
+.route('/')
+.get(usersController.getNeighbors)
+// .post(usersController.newUser)
+// .put(usersController.getNeighbors)
 // .post(usersController.index);
 
 
 //change to just .get/users
-router
-.route('/getneighbors')
-.get(usersController.getNeighbors);
+// router
+// .route('/getneighbors')
+// .get(usersController.getNeighbors);
 
 
 //change to .post/login instead of .post/users/login

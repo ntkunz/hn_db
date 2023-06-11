@@ -2,11 +2,12 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 // Create jwt token based off of user including email
-const createJWT = (email, location) => {
+// const createJWT = (email, location) => {
+const createJWT = (email) => {
 	const token = jwt.sign(
 		{
 			email: email,
-			location: location,
+			// location: location,
 		},
 		process.env.JWT_SECRET,
 		{ expiresIn: process.env.JWT_EXPIRES_IN }
@@ -20,12 +21,12 @@ const protect = (req, res, next) => {
 
 	if (!bearer) {
 		//if the route is /users/login, allow access
-		if (req.originalUrl === "/users/login") {
+		if (req.originalUrl === "/users/login" || req.originalUrl === "/users/newemail" || req.originalUrl === "/users/newuser") {
 			next();
 			return;
 		};
-		res.status(401);
-		res.json({ message: "not authorized" });
+		res.status(401).json({ message: "not authorized" });
+		// res.json({ message: "not authorized" });
 		return;
 	}
 

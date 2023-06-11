@@ -8,7 +8,8 @@ const {
 	getInfoFromToken,
 } = require("../modules/auth");
 
-let emailRregex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+let emailRregex =
+	/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
 
 //NEED TO CREATE A LOGIN ROUTE TO LOG IN A USER, WHICH WOULD BE DONE WITH EMAIL AND PASSWORD
@@ -24,6 +25,7 @@ exports.getNeighbors = async (req, res) => {
 	const splitToken = token.split(" ")[1];
 	//decode token to get email
 	const info = getInfoFromToken(splitToken);
+
 	//if info returns an error, return 401
 	if (info.error) {
 		return res.status(401).json({ error: info.error });
@@ -39,8 +41,29 @@ exports.getNeighbors = async (req, res) => {
 	try {
 		//find user who logged in
 		const foundUser = await knex("users")
+			.where(whereClause)
 			.join(joinClause.table, joinClause.joinCondition)
-			.where(whereClause);
+			.select(
+				"users.user_id",
+				"users.about",
+				"users.email",
+				"users.first_name",
+				"users.last_name",
+				"users.location",
+				"users.image_url",
+				"users.status",
+				"users.home",
+				"users.city",
+				"users.province",
+				"users.address",
+				"users.created_at"
+			)
+			.select(
+				knex.raw(
+					"JSON_OBJECTAGG(userskills.skill, userskills.offer) as barters"
+				)
+			)
+			.groupBy("users.user_id");
 
 		//if no user found, return error
 		if (foundUser.length === 0) {
@@ -173,26 +196,26 @@ exports.verifyUser = async (req, res) => {
 				.where(whereClause)
 				.join(joinClause.table, joinClause.joinCondition)
 				.select(
-						"users.user_id",
-						"users.about",
-						"users.email",
-						"users.first_name",
-						"users.last_name",
-						"users.location",
-						"users.image_url",
-						"users.status",
-						"users.home",
-						"users.city",
-						"users.province",
-						"users.address",
-						"users.created_at",
+					"users.user_id",
+					"users.about",
+					"users.email",
+					"users.first_name",
+					"users.last_name",
+					"users.location",
+					"users.image_url",
+					"users.status",
+					"users.home",
+					"users.city",
+					"users.province",
+					"users.address",
+					"users.created_at"
+				)
+				.select(
+					knex.raw(
+						"JSON_OBJECTAGG(userskills.skill, userskills.offer) as barters"
 					)
-					.select(
-						knex.raw(
-							"JSON_OBJECTAGG(userskills.skill, userskills.offer) as barters"
-						)
-					)
-					.groupBy("users.user_id");
+				)
+				.groupBy("users.user_id");
 			//if email not in use, send 200 status, if email in use, send 202 status
 			if (foundUser.length === 0) {
 				return res
@@ -242,14 +265,49 @@ exports.newUser = async (req, res) => {
 	try {
 		await knex("users").insert(newUserData);
 
-		const whereClause = { email: req.body.email };
-		const newUser = await knex("users").where(whereClause).first();
+		// console.log('req.body: ', req.body)
+
+		// // const whereClause = { email: req.body.email };
+		// const whereClause = { 'users.email': req.body.email };
+		// const joinClause = {
+		// 	table: "userskills",
+		// 	joinCondition: function () {
+		// 		this.on("users.user_id", "=", "userskills.user_id");
+		// 	},
+		// };
+		// const newUser = await knex("users")
+		// 	.where(whereClause)
+		// 	.join(joinClause.table, joinClause.joinCondition)
+		// 	.select(
+		// 		"users.user_id",
+		// 		"users.about",
+		// 		"users.email",
+		// 		"users.first_name",
+		// 		"users.last_name",
+		// 		"users.location",
+		// 		"users.image_url",
+		// 		"users.status",
+		// 		"users.home",
+		// 		"users.city",
+		// 		"users.province",
+		// 		"users.address",
+		// 		"users.created_at"
+		// 	)
+		// 	.select(
+		// 		knex.raw(
+		// 			"JSON_OBJECTAGG(userskills.skill, userskills.offer) as barters"
+		// 		)
+		// 	)
+		// 	.groupBy("users.user_id");
+
+		// console.log("newuser line 274 ", newUser);
 
 		// Create and assign a token
-		const token = createJWT(newUser);
+		const token = createJWT(req.body.email);
 
 		// return user and auth token with user_id to client
-		res.status(200).json({ token: token, user: newUser });
+		// res.status(200).json({ token: token, user: newUser });
+		res.status(200).json({ token: token, userId: req.body.user_id });
 	} catch (err) {
 		console.error(err);
 		return res.status(400).send(`Error adding new user ${err}`);
@@ -258,13 +316,13 @@ exports.newUser = async (req, res) => {
 
 //edit a user's information
 exports.editUser = async (req, res) => {
-	const whereClause = { 'users.user_id': req.body.user_id };
+	const whereClause = { "users.user_id": req.body.user_id };
 	const joinClause = {
 		table: "userskills",
 		joinCondition: function () {
 			this.on("users.user_id", "=", "userskills.user_id");
-		}
-	}
+		},
+	};
 	const updateData = {
 		user_id: req.body.user_id,
 		about: req.body.about,
@@ -299,7 +357,7 @@ exports.editUser = async (req, res) => {
 				"users.city",
 				"users.province",
 				"users.address",
-				"users.created_at",
+				"users.created_at"
 			)
 			.select(
 				knex.raw(
@@ -384,7 +442,8 @@ exports.login = async (req, res) => {
 
 		//EDIT LATER TO CREATE THE TOKEN WITH LESS INFORMATION!!!!!!
 
-		const token = createJWT(foundUser.email, foundUser.location);
+		// const token = createJWT(foundUser.email, foundUser.location);
+		const token = createJWT(foundUser.email);
 		res.status(200).json({ token: token, user: userWithoutPassword });
 	} catch (err) {
 		console.error(err);
