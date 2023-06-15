@@ -3,7 +3,7 @@ const knexConfig = require('../knexfile');
 const knex = require('knex')(knexConfig);
 
 // userQueries.js
-const whereClause = (userId) => ({ "users.user_id": userId });
+const whereClause = (userEmail) => ({ "users.email": userEmail });
 
 const joinClause = {
   table: "userskills",

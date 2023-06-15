@@ -7,7 +7,13 @@ const {
 	getInfoFromToken,
 } = require("../modules/auth");
 
-const { updateUser, getUser, whereClause, joinClause, userData } = require("../modules/userService");
+const {
+	updateUser,
+	getUser,
+	whereClause,
+	joinClause,
+	userData,
+} = require("../modules/userService");
 
 let emailRregex =
 	/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -209,90 +215,44 @@ exports.verifyUser = async (req, res) => {
 
 // Edit a user's information
 exports.editUser = async (req, res) => {
-	const userId = req.body.user_id;
+	const userEmail = req.body.email;
 	const updateData = userData(req);
 
 	try {
-		await updateUser(whereClause(userId), updateData);
-		const editedUser = await getUser(
-			whereClause(userId),
-			joinClause
-		);
-		res.json(editedUser);
+		await updateUser(whereClause(userEmail), updateData);
+		const editedUser = await getUser(whereClause(userEmail), joinClause);
+		res.json(editedUser.user);
 	} catch (err) {
-		console.error(err);
-		return res.status(400).send(`Error editing user: ${err}`);
+		// console.error(err);
+		return res.status(400).send(`Error editing user`);
 	}
 };
 
-//login a user
+// Login a user
 exports.login = async (req, res) => {
-	const whereClause = { email: req.body.email };
-	const joinClause = {
-		table: "userskills",
-		joinCondition: function () {
-			this.on("users.user_id", "=", "userskills.user_id");
-		},
-	};
+	const email = req.body.email;
+
 	try {
-		//find user who logged in
-
-		const foundUser = await knex("users")
-			.join(joinClause.table, joinClause.joinCondition)
-			.select(
-				"users.user_id",
-				"users.about",
-				"users.email",
-				"users.first_name",
-				"users.last_name",
-				"users.location",
-				"users.image_url",
-				"users.status",
-				"users.home",
-				"users.city",
-				"users.province",
-				"users.address",
-				"users.created_at",
-				"users.password"
-			)
-			.select(
-				knex.raw(
-					"JSON_OBJECTAGG(userskills.skill, userskills.offer) as barters"
-				)
-			)
-			.groupBy("users.user_id")
-			.where(whereClause)
-			.first();
-
-		//check password against user inputed password
-
+		// Find user who logged in
+		const foundUser = await getUser(whereClause(email), joinClause);
+		if (!foundUser) {
+			return res.status(404).send(`Credentials Wrong`);
+		}
+		// Check password against user inputed password
 		const pwCheck = await comparePasswords(
 			req.body.password,
 			foundUser.password
 		);
-		//if password is incorrect, return error
-
 		if (!pwCheck) {
-			console.log("passwords do not match");
-			return res.status(404).send(`no can do`);
-		}
-
-		if (foundUser.length === 0) {
-			// Do not return 404, because that would leak information about whether a given email is registered or not.
-			// Invalid Login might be a better response below
-			console.log("no found user");
 			return res.status(404).send(`Credentials Wrong`);
 		}
-		//if password is correct, remove password and create token and send to client
-		//remove password from user object into new object
-		const { password, ...userWithoutPassword } = foundUser;
 
-		// const token = createJWT(foundUser.email, foundUser.location);
-		const token = createJWT(foundUser.email);
-		res.status(200).json({ token: token, user: userWithoutPassword });
+		// Create token and send it to the client along with the user
+		const token = createJWT(foundUser.user.email);
+		res.status(200).json({ token, user: foundUser.user });
 	} catch (err) {
 		console.error(err);
-		return res.status(400).send(`Error logging in ${err}`);
+		return res.status(400).send(`Error logging in`);
 	}
 };
 
