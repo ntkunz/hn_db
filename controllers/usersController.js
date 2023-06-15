@@ -191,7 +191,6 @@ exports.editUser = async (req, res) => {
 		const editedUser = await getUser(whereClause(userEmail), joinClause);
 		res.json(editedUser.user);
 	} catch (err) {
-		// console.error(err);
 		return res.status(400).send(`Error editing user`);
 	}
 };
@@ -219,7 +218,6 @@ exports.login = async (req, res) => {
 		const token = createJWT(foundUser.user.email);
 		res.status(200).json({ token, user: foundUser.user });
 	} catch (err) {
-		console.error(err);
 		return res.status(400).send(`Error logging in`);
 	}
 };
