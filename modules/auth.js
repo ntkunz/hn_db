@@ -21,7 +21,8 @@ const protect = (req, res, next) => {
 
 	if (!bearer) {
 		//if the route is /users/login, allow access
-		if (req.originalUrl === "/users/login" || req.originalUrl === "/users/newemail" || req.originalUrl === "/users/newuser") {
+		// if (req.originalUrl === "/users/login" || req.originalUrl === "/users/newemail" || req.originalUrl === "/users/newuser") {
+		if (req.originalUrl === "/users/login" || req.originalUrl === "/users/newemail" || req.method === 'POST' && req.originalUrl.startsWith("/users")) {
 			next();
 			return;
 		};

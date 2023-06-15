@@ -163,33 +163,6 @@ exports.verifyUser = async (req, res) => {
 			},
 		};
 
-		//		await knex("users").where(whereClause).first().update(updateData);
-		// const editedUser = await knex("users")
-		// .where("user_id", req.body.user_id)
-		// .join(joinClause.table, joinClause.joinCondition)
-		// .select(
-		// 	"users.user_id",
-		// 	"users.about",
-		// 	"users.email",
-		// 	"users.first_name",
-		// 	"users.last_name",
-		// 	"users.location",
-		// 	"users.image_url",
-		// 	"users.status",
-		// 	"users.home",
-		// 	"users.city",
-		// 	"users.province",
-		// 	"users.address",
-		// 	"users.created_at",
-		// )
-		// .select(
-		// 	knex.raw(
-		// 		"JSON_OBJECTAGG(userskills.skill, userskills.offer) as barters"
-		// 	)
-		// )
-		// .groupBy("users.user_id")
-		// .where(whereClause)
-		// .first();
 		try {
 			//get user and userskills from database from token email
 			const foundUser = await knex("users")
@@ -225,7 +198,6 @@ exports.verifyUser = async (req, res) => {
 				//remove password from user object
 				const { password, ...userWithoutPassword } = foundUser;
 				//returning the found user may be the error here
-				// res.json(foundUser);
 				res.json(userWithoutPassword);
 			}
 		} catch (err) {
@@ -250,7 +222,6 @@ exports.editUser = async (req, res) => {
 		first_name: req.body.first_name,
 		last_name: req.body.last_name,
 		location: knex.raw("POINT(?, ?)", [req.body.coords[0], req.body.coords[1]]),
-		// password: req.body.password,
 		image_url: req.body.image_url,
 		status: req.body.status,
 		home: req.body.home,
@@ -262,7 +233,6 @@ exports.editUser = async (req, res) => {
 	try {
 		await knex("users").where(whereClause).first().update(updateData);
 		const editedUser = await knex("users")
-			// .where("user_id", req.body.user_id)
 			.join(joinClause.table, joinClause.joinCondition)
 			.select(
 				"users.user_id",
@@ -291,7 +261,6 @@ exports.editUser = async (req, res) => {
 		const { password, ...editedUserWithoutPassword } = editedUser;
 		//return editedUserWithoutPassword to client
 		res.json(editedUserWithoutPassword);
-		// res.json(editedUser);
 	} catch (err) {
 		console.error(err);
 		return res.status(400).send(`Error editing user ${err}`);
@@ -427,7 +396,6 @@ exports.addImage = async (req, res) => {
 		const result = await knex("users")
 			.where({ user_id })
 			.update({ image_url })
-			// .returning("image_url");
 		// If no user was found, return a 404 error
 		if (result.length === 0) {
 			return res.status(404).json({ error: "User not found" });
