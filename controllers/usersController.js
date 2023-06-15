@@ -1,12 +1,17 @@
 const knex = require("knex")(require("../knexfile"));
-// const bcrypt = require("bcryptjs");
-// const jwt = require("jsonwebtoken");
+
 const {
 	createJWT,
 	comparePasswords,
 	hashPassword,
 	getInfoFromToken,
 } = require("../modules/auth");
+
+//get updateUser and getUser functions from modules/userService
+// const { updateUser, getUser } = require("../modules/userService");
+
+const userService = require("../modules/userService");
+const { updateUser, getUser, whereClause, joinClause, userData } = userService;
 
 let emailRregex =
 	/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -206,66 +211,170 @@ exports.verifyUser = async (req, res) => {
 	}
 };
 
-//edit a user's information
+// Edit a user's information
 exports.editUser = async (req, res) => {
-	const whereClause = { "users.user_id": req.body.user_id };
-	const joinClause = {
-		table: "userskills",
-		joinCondition: function () {
-			this.on("users.user_id", "=", "userskills.user_id");
-		},
-	};
-	const updateData = {
-		user_id: req.body.user_id,
-		about: req.body.about,
-		email: req.body.email,
-		first_name: req.body.first_name,
-		last_name: req.body.last_name,
-		location: knex.raw("POINT(?, ?)", [req.body.coords[0], req.body.coords[1]]),
-		image_url: req.body.image_url,
-		status: req.body.status,
-		home: req.body.home,
-		city: req.body.city,
-		province: req.body.province,
-		address: req.body.address,
-	};
+	const userId = req.body.user_id;
+	const updateData = userService.userData(req);
 
 	try {
-		await knex("users").where(whereClause).first().update(updateData);
-		const editedUser = await knex("users")
-			.join(joinClause.table, joinClause.joinCondition)
-			.select(
-				"users.user_id",
-				"users.about",
-				"users.email",
-				"users.first_name",
-				"users.last_name",
-				"users.location",
-				"users.image_url",
-				"users.status",
-				"users.home",
-				"users.city",
-				"users.province",
-				"users.address",
-				"users.created_at"
-			)
-			.select(
-				knex.raw(
-					"JSON_OBJECTAGG(userskills.skill, userskills.offer) as barters"
-				)
-			)
-			.groupBy("users.user_id")
-			.where(whereClause)
-			.first();
-		//create editedUser minus password
-		const { password, ...editedUserWithoutPassword } = editedUser;
-		//return editedUserWithoutPassword to client
-		res.json(editedUserWithoutPassword);
+		await userService.updateUser(userService.whereClause(userId), updateData);
+		const editedUser = await userService.getUser(
+			userService.whereClause(userId),
+			userService.joinClause
+		);
+		res.json(editedUser);
 	} catch (err) {
 		console.error(err);
-		return res.status(400).send(`Error editing user ${err}`);
+		return res.status(400).send(`Error editing user: ${err}`);
 	}
 };
+
+//UPDATED EDIT USER FUNCTION AND HELPERS
+
+////////WORKS GREAT BUT WORKING ON EXTRAPOLATING MORE FROM IT NOW/////////
+
+// Helper function to update user information
+// async function updateUser(whereClause, updateData) {
+// 	try {
+// 	  await knex("users").where(whereClause).first().update(updateData);
+// 	} catch (err) {
+// 	  throw new Error(`Error updating user: ${err}`);
+// 	}
+//  }
+
+//  // Helper function to retrieve edited user information
+//  async function getEditedUser(whereClause, joinClause) {
+// 	try {
+// 	  const editedUser = await knex("users")
+// 		 .join(joinClause.table, joinClause.joinCondition)
+// 		 .select(
+// 			"users.user_id",
+// 			"users.about",
+// 			"users.email",
+// 			"users.first_name",
+// 			"users.last_name",
+// 			"users.location",
+// 			"users.image_url",
+// 			"users.status",
+// 			"users.home",
+// 			"users.city",
+// 			"users.province",
+// 			"users.address",
+// 			"users.created_at"
+// 		 )
+// 		 .select(
+// 			knex.raw(
+// 			  "JSON_OBJECTAGG(userskills.skill, userskills.offer) as barters"
+// 			)
+// 		 )
+// 		 .groupBy("users.user_id")
+// 		 .where(whereClause)
+// 		 .first();
+
+// 	  // Exclude password from the user object
+// 	  const { password, ...editedUserWithoutPassword } = editedUser;
+// 	  return editedUserWithoutPassword;
+// 	} catch (err) {
+// 	  throw new Error(`Error retrieving edited user: ${err}`);
+// 	}
+//  }
+
+//  // Edit a user's information
+//  exports.editUser = async (req, res) => {
+// 	const whereClause = { "users.user_id": req.body.user_id };
+// 	const joinClause = {
+// 	  table: "userskills",
+// 	  joinCondition: function () {
+// 		 this.on("users.user_id", "=", "userskills.user_id");
+// 	  },
+// 	};
+// 	const updateData = {
+// 	  user_id: req.body.user_id,
+// 	  about: req.body.about,
+// 	  email: req.body.email,
+// 	  first_name: req.body.first_name,
+// 	  last_name: req.body.last_name,
+// 	  location: knex.raw("POINT(?, ?)", [req.body.coords[0], req.body.coords[1]]),
+// 	  image_url: req.body.image_url,
+// 	  status: req.body.status,
+// 	  home: req.body.home,
+// 	  city: req.body.city,
+// 	  province: req.body.province,
+// 	  address: req.body.address,
+// 	};
+
+// 	try {
+// 	  await updateUser(whereClause, updateData);
+// 	  const editedUser = await getEditedUser(whereClause, joinClause);
+// 	  res.json(editedUser);
+// 	} catch (err) {
+// 	  console.error(err);
+// 	  return res.status(400).send(`Error editing user: ${err}`);
+// 	}
+//  };
+
+///////   PREVIOUS VERSION THAT WORKS , ABOVE WORKS BETTER, AND TRYING NEWEST AT VERY TOP
+
+// //edit a user's information
+// exports.editUser = async (req, res) => {
+// 	const whereClause = { "users.user_id": req.body.user_id };
+// 	const joinClause = {
+// 		table: "userskills",
+// 		joinCondition: function () {
+// 			this.on("users.user_id", "=", "userskills.user_id");
+// 		},
+// 	};
+// 	const updateData = {
+// 		user_id: req.body.user_id,
+// 		about: req.body.about,
+// 		email: req.body.email,
+// 		first_name: req.body.first_name,
+// 		last_name: req.body.last_name,
+// 		location: knex.raw("POINT(?, ?)", [req.body.coords[0], req.body.coords[1]]),
+// 		image_url: req.body.image_url,
+// 		status: req.body.status,
+// 		home: req.body.home,
+// 		city: req.body.city,
+// 		province: req.body.province,
+// 		address: req.body.address,
+// 	};
+
+// 	try {
+// 		await knex("users").where(whereClause).first().update(updateData);
+// 		const editedUser = await knex("users")
+// 			.join(joinClause.table, joinClause.joinCondition)
+// 			.select(
+// 				"users.user_id",
+// 				"users.about",
+// 				"users.email",
+// 				"users.first_name",
+// 				"users.last_name",
+// 				"users.location",
+// 				"users.image_url",
+// 				"users.status",
+// 				"users.home",
+// 				"users.city",
+// 				"users.province",
+// 				"users.address",
+// 				"users.created_at"
+// 			)
+// 			.select(
+// 				knex.raw(
+// 					"JSON_OBJECTAGG(userskills.skill, userskills.offer) as barters"
+// 				)
+// 			)
+// 			.groupBy("users.user_id")
+// 			.where(whereClause)
+// 			.first();
+// 		//create editedUser minus password
+// 		const { password, ...editedUserWithoutPassword } = editedUser;
+// 		//return editedUserWithoutPassword to client
+// 		res.json(editedUserWithoutPassword);
+// 	} catch (err) {
+// 		console.error(err);
+// 		return res.status(400).send(`Error editing user ${err}`);
+// 	}
+// };
 
 //login a user
 exports.login = async (req, res) => {
@@ -338,7 +447,6 @@ exports.login = async (req, res) => {
 	}
 };
 
-
 //create a new user
 exports.newUser = async (req, res) => {
 	// Confirm password meets requirements
@@ -380,7 +488,6 @@ exports.newUser = async (req, res) => {
 	}
 };
 
-
 /**
  * Add an image to a user's profile
  * @param {Object} req - The HTTP request object
@@ -393,9 +500,7 @@ exports.addImage = async (req, res) => {
 	const image_url = req.file.filename;
 	try {
 		// Update the user's image_url in the database
-		const result = await knex("users")
-			.where({ user_id })
-			.update({ image_url })
+		const result = await knex("users").where({ user_id }).update({ image_url });
 		// If no user was found, return a 404 error
 		if (result.length === 0) {
 			return res.status(404).json({ error: "User not found" });
