@@ -25,6 +25,8 @@ let storage = multer.diskStorage({
 router
 .route('/')
 .get(usersController.getNeighbors)
+// thursday attempt to make editUser a put request instead of a post
+.put(usersController.editUser);
 // .post(usersController.newUser)
 // .put(usersController.getNeighbors)
 // .post(usersController.index);
@@ -53,9 +55,10 @@ router
 
 //post request to edit user information
 //change to .put/users instead of .post/users/edituser
-router
-.route('/edituser')
-.post(usersController.editUser);
+//CHANGED THURSDAY MORNING TO TEST
+// router
+// .route('/edituser')
+// .post(usersController.editUser);
 
 //newEmail to check if email exists in database
 //can I do this as a function in auth.js instead of it being a route?

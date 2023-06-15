@@ -234,86 +234,6 @@ exports.verifyUser = async (req, res) => {
 	}
 };
 
-//create a new user
-exports.newUser = async (req, res) => {
-	// Confirm password meets requirements
-	if (req.body.password.length < 8 || !passwordRegex.test(req.body.password)) {
-		return res.status(404)
-			.send(`Password must be at least 8 characters and contain 
-		at least one uppercase letter, one lowercase letter, one number and one special character`);
-	}
-
-	const hashedPassword = await hashPassword(req.body.password);
-
-	const newUserData = {
-		user_id: req.body.user_id,
-		about: req.body.about,
-		email: req.body.email,
-		first_name: req.body.first_name,
-		last_name: req.body.last_name,
-		location: knex.raw("POINT(?, ?)", [req.body.coords[0], req.body.coords[1]]),
-		password: hashedPassword,
-		// password: req.body.password,
-		image_url: req.body.image_url,
-		status: req.body.status,
-		home: req.body.home,
-		city: req.body.city,
-		province: req.body.province,
-		address: req.body.address,
-	};
-
-	try {
-		await knex("users").insert(newUserData);
-
-		// console.log('req.body: ', req.body)
-
-		// // const whereClause = { email: req.body.email };
-		// const whereClause = { 'users.email': req.body.email };
-		// const joinClause = {
-		// 	table: "userskills",
-		// 	joinCondition: function () {
-		// 		this.on("users.user_id", "=", "userskills.user_id");
-		// 	},
-		// };
-		// const newUser = await knex("users")
-		// 	.where(whereClause)
-		// 	.join(joinClause.table, joinClause.joinCondition)
-		// 	.select(
-		// 		"users.user_id",
-		// 		"users.about",
-		// 		"users.email",
-		// 		"users.first_name",
-		// 		"users.last_name",
-		// 		"users.location",
-		// 		"users.image_url",
-		// 		"users.status",
-		// 		"users.home",
-		// 		"users.city",
-		// 		"users.province",
-		// 		"users.address",
-		// 		"users.created_at"
-		// 	)
-		// 	.select(
-		// 		knex.raw(
-		// 			"JSON_OBJECTAGG(userskills.skill, userskills.offer) as barters"
-		// 		)
-		// 	)
-		// 	.groupBy("users.user_id");
-
-		// console.log("newuser line 274 ", newUser);
-
-		// Create and assign a token
-		const token = createJWT(req.body.email);
-
-		// return user and auth token with user_id to client
-		// res.status(200).json({ token: token, user: newUser });
-		res.status(200).json({ token: token, userId: req.body.user_id });
-	} catch (err) {
-		console.error(err);
-		return res.status(400).send(`Error adding new user ${err}`);
-	}
-};
-
 //edit a user's information
 exports.editUser = async (req, res) => {
 	const whereClause = { "users.user_id": req.body.user_id };
@@ -440,8 +360,6 @@ exports.login = async (req, res) => {
 		//remove password from user object into new object
 		const { password, ...userWithoutPassword } = foundUser;
 
-		//EDIT LATER TO CREATE THE TOKEN WITH LESS INFORMATION!!!!!!
-
 		// const token = createJWT(foundUser.email, foundUser.location);
 		const token = createJWT(foundUser.email);
 		res.status(200).json({ token: token, user: userWithoutPassword });
@@ -451,17 +369,74 @@ exports.login = async (req, res) => {
 	}
 };
 
-//add image to user profile
-exports.addImage = async (req, res) => {
-	//match user_id to user_id in database
-	const whereClause = { user_id: req.body.user_id };
-	//create object with image_url for update
-	const updateData = { image_url: req.file.filename };
+
+//create a new user
+exports.newUser = async (req, res) => {
+	// Confirm password meets requirements
+	if (req.body.password.length < 8 || !passwordRegex.test(req.body.password)) {
+		return res.status(404)
+			.send(`Password must be at least 8 characters and contain 
+		at least one uppercase letter, one lowercase letter, one number and one special character`);
+	}
+
+	const hashedPassword = await hashPassword(req.body.password);
+
+	const newUserData = {
+		user_id: req.body.user_id,
+		about: req.body.about,
+		email: req.body.email,
+		first_name: req.body.first_name,
+		last_name: req.body.last_name,
+		location: knex.raw("POINT(?, ?)", [req.body.coords[0], req.body.coords[1]]),
+		password: hashedPassword,
+		image_url: req.body.image_url,
+		status: req.body.status,
+		home: req.body.home,
+		city: req.body.city,
+		province: req.body.province,
+		address: req.body.address,
+	};
+
 	try {
-		await knex("users").where(whereClause).update(updateData); // Insert the image data into the database
-		res.status(200).json({ message: "Image uploaded successfully" }); // Send a success response back to the client
+		await knex("users").insert(newUserData);
+		// Create and assign a token
+		const token = createJWT(req.body.email);
+		// return user and auth token with user_id to client
+		// res.status(200).json({ token: token, user: newUser });
+		res.status(200).json({ token: token, userId: req.body.user_id });
+		// res.status(200).json({ token: token, user: newUser});
 	} catch (err) {
 		console.error(err);
-		return res.status(500).json({ error: err.message }); // Send an error response back to the client if unsuccessful
+		return res.status(400).send(`Error adding new user ${err}`);
+	}
+};
+
+
+/**
+ * Add an image to a user's profile
+ * @param {Object} req - The HTTP request object
+ * @param {Object} res - The HTTP response object
+ * @returns {Object} The HTTP response object
+ */
+exports.addImage = async (req, res) => {
+	// Extract the user_id and image_url from the request body and file
+	const { user_id } = req.body;
+	const image_url = req.file.filename;
+	try {
+		// Update the user's image_url in the database
+		const result = await knex("users")
+			.where({ user_id })
+			.update({ image_url })
+			// .returning("image_url");
+		// If no user was found, return a 404 error
+		if (result.length === 0) {
+			return res.status(404).json({ error: "User not found" });
+		}
+		// If the update was successful, return a success message
+		return res.status(200).json({ message: "Image uploaded successfully" });
+	} catch (err) {
+		// If an error occurred, log it and return a 500 error with the error message
+		console.error(err);
+		return res.status(500).json({ error: err.message });
 	}
 };
