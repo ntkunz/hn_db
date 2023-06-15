@@ -144,14 +144,14 @@ exports.verifyUser = async (req, res) => {
 
 		//if info returns an error, return 401
 		if (info.error) {
-			return res.status(401).json({ error: info.error });
+			return res.status(401).json({ error: "token error" });
 		}
 
 		//make sure token is not expired
 		const currentTimestamp = Math.floor(Date.now() / 1000); // Get the current timestamp in seconds
 		if (info.exp && info.exp < currentTimestamp) {
 			// The token has expired, return 401
-			return res.status(401).json({ error: "Token expired" });
+			return res.status(401).json({ error: "token error" });
 		}
 
 		//store email from token then retrieve user info if all is valid
@@ -159,7 +159,7 @@ exports.verifyUser = async (req, res) => {
 
 		//throw error if invalid token
 		if (!email) {
-			return res.status(401).json({ error: "Invalid token" });
+			return res.status(401).json({ error: "token error" });
 		}
 
 		try {
@@ -170,13 +170,13 @@ exports.verifyUser = async (req, res) => {
 			if (foundUser.length === 0) {
 				return res
 					.status(200)
-					.send(`No user found with email ${req.body.email}`);
+					.send("token error");
 			} else {
 				//return user info to frontend
 				res.json(foundUser.user);
 			}
 		} catch (err) {
-			return res.status(400).send(`Error confirming user ${err}`);
+			return res.status(400).send({ error: "token error" });
 		}
 	}
 };
