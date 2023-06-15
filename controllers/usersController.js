@@ -138,10 +138,10 @@ exports.verifyUser = async (req, res) => {
 	const token = req.headers.authorization;
 
 	if (token) {
-		// split token to remove bearer
+		// split token to remove bearer and get info from token values
 		const splitToken = token.split(" ")[1];
-		//get the information from the token
 		const info = getInfoFromToken(splitToken);
+
 		//if info returns an error, return 401
 		if (info.error) {
 			return res.status(401).json({ error: info.error });
@@ -154,58 +154,26 @@ exports.verifyUser = async (req, res) => {
 			return res.status(401).json({ error: "Token expired" });
 		}
 
-		const loggedInUserEmail = info.email;
-		//login the user based on the email
+		//store email from token then retrieve user info if all is valid
+		const email = info.email;
 
 		//throw error if invalid token
-		if (!loggedInUserEmail) {
+		if (!email) {
 			return res.status(401).json({ error: "Invalid token" });
 		}
-		const whereClause = { email: loggedInUserEmail };
-		//join userskills table to users table
-		const joinClause = {
-			table: "userskills",
-			joinCondition: function () {
-				this.on("users.user_id", "=", "userskills.user_id");
-			},
-		};
 
 		try {
 			//get user and userskills from database from token email
-			const foundUser = await knex("users")
-				.where(whereClause)
-				.join(joinClause.table, joinClause.joinCondition)
-				.select(
-					"users.user_id",
-					"users.about",
-					"users.email",
-					"users.first_name",
-					"users.last_name",
-					"users.location",
-					"users.image_url",
-					"users.status",
-					"users.home",
-					"users.city",
-					"users.province",
-					"users.address",
-					"users.created_at"
-				)
-				.select(
-					knex.raw(
-						"JSON_OBJECTAGG(userskills.skill, userskills.offer) as barters"
-					)
-				)
-				.groupBy("users.user_id");
+			const foundUser = await getUser(whereClause(email), joinClause);
+
 			//if email not in use, send 200 status, if email in use, send 202 status
 			if (foundUser.length === 0) {
 				return res
 					.status(200)
 					.send(`No user found with email ${req.body.email}`);
 			} else {
-				//remove password from user object
-				const { password, ...userWithoutPassword } = foundUser;
-				//returning the found user may be the error here
-				res.json(userWithoutPassword);
+				//return user info to frontend
+				res.json(foundUser.user);
 			}
 		} catch (err) {
 			return res.status(400).send(`Error confirming user ${err}`);
