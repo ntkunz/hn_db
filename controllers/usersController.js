@@ -13,6 +13,7 @@ const {
 	whereClause,
 	joinClause,
 	userData,
+	getUserPassword,
 } = require("../modules/userService");
 
 let emailRregex =
@@ -257,15 +258,13 @@ exports.editUser = async (req, res) => {
 	try {
 		// Update the user based on the email and update data.
 		await updateUser(whereClause(userEmail), updateData);
-
 		// Get the updated user with additional data from the join clause.
 		const editedUser = await getUser(whereClause(userEmail), joinClause);
-
 		// Send the edited user object in the response.
 		return res.json(editedUser.user);
 	} catch (err) {
 		// If there was an error, return a 400 status code with an error message.
-		return res.status(400).send(`Error editing user`);
+		return res.status(400).send(`Error editing user` + err);
 	}
 };
 
@@ -292,5 +291,44 @@ exports.addImage = async (req, res) => {
 		// If an error occurred, log it and return a 500 error with the error message
 		console.error(err);
 		return res.status(500).json({ error: err.message });
+	}
+};
+
+exports.deleteUser = async (req, res) => {
+	const userEmail = req.body.email;
+	const userId = req.body.userId;
+	const userPassword = req.body.password;
+
+	//retrieve user's password from the database
+	const userDbPassword = await getUserPassword(whereClause(userEmail));
+
+	// Check password against user inputed password
+	const pwCheck = await comparePasswords(
+		// req.body.password,
+		userPassword,
+		userDbPassword.password
+	);
+
+	// If password incorrect, return 404 error
+	if (!pwCheck) {
+		// return res.status(404).send(`Credentials Wrong`);
+		return res.status(404).send(`failed password check`);
+	}
+
+	//confirm received userId matches database userId
+	if (userId !== userDbPassword.user_id) {
+		// return res.status(404).send(`Credentials Wrong`);
+		return res.status(404).send(`failed user id check`);
+	}
+
+	try {
+		// Delete the user from the database
+		const result = await knex("users").where(whereClause(userEmail)).del();
+
+		// If the delete was successful, return a success message
+		return res.status(200).json({ message: "User deleted successfully" });
+	} catch (err) {
+		// return res.status(500).json({ error: err.message });
+		return res.status(500).json({ error: "Unable to delete user" });
 	}
 };

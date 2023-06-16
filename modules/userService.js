@@ -1,6 +1,6 @@
 //require knex and the knex configuration files
-const knexConfig = require('../knexfile');
-const knex = require('knex')(knexConfig);
+const knexConfig = require("../knexfile");
+const knex = require("knex")(knexConfig);
 
 const { whereClause, joinClause, userData } = require("./userQueries");
 
@@ -27,7 +27,7 @@ async function getUser(whereClause, joinClause) {
 				"users.location",
 				"users.image_url",
 				"users.status",
-            "users.password",
+				"users.password",
 				"users.home",
 				"users.city",
 				"users.province",
@@ -43,10 +43,23 @@ async function getUser(whereClause, joinClause) {
 			.where(whereClause)
 			.first();
 
-		// Exclude password from the user object
+			// Exclude password from the user object
 		const { password, ...userWithoutPassword } = user;
+		return { user: userWithoutPassword, password: password };
+		// return { user: userWithoutPassword, password: user.password };
 
-      return { user: userWithoutPassword, password: user.password };
+	} catch (err) {
+		throw new Error(`Error retrieving edited user: ${err}`);
+	}
+}
+
+async function getUserPassword(whereClause) {
+	try {
+		const user = await knex("users")
+			.select("password", "user_id")
+			.where(whereClause)
+			.first();
+		return user;
 	} catch (err) {
 		throw new Error(`Error retrieving edited user: ${err}`);
 	}
@@ -58,4 +71,5 @@ module.exports = {
 	whereClause,
 	joinClause,
 	userData,
+	getUserPassword,
 };

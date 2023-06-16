@@ -9,7 +9,9 @@ router
 //edit user route
 .put(usersController.editUser)
 //new user post request route
-.post(usersController.newUser);
+.post(usersController.newUser)
+//delete user from database route
+.delete(usersController.deleteUser);
 
 //route to login user
 router
