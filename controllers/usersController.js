@@ -119,10 +119,9 @@ exports.getNeighbors = async (req, res) => {
 //function that check that a new email is not already in use
 exports.newEmail = async (req, res) => {
 	//check if email exists in database
-	const whereClause = { email: req.body.email };
 	try {
-		const foundUser = await knex("users").where(whereClause);
-		//if email not in use, send 200 status, if email in use, send 202 status
+		const foundUser = await knex("users").where(whereClause(req.body.email));
+		//if email not in use, send 200 status, if email in use, send 202 status. Sending error stops frontend function from completing
 		if (foundUser.length === 0) {
 			return res.status(200).send(`No user found with email ${req.body.email}`);
 		} else {
@@ -254,9 +253,7 @@ exports.newUser = async (req, res) => {
 		// Create and assign a token
 		const token = createJWT(req.body.email);
 		// return user and auth token with user_id to client
-		// res.status(200).json({ token: token, user: newUser });
 		res.status(200).json({ token: token, userId: req.body.user_id });
-		// res.status(200).json({ token: token, user: newUser});
 	} catch (err) {
 		console.error(err);
 		return res.status(400).send(`Error adding new user ${err}`);
