@@ -46,12 +46,6 @@ async function getUser(whereClause, joinClause) {
 		// Exclude password from the user object
 		const { password, ...userWithoutPassword } = user;
 
-               // console.log('user: ', user)
-
-
-		//return userWithoutPassword and the password from the user object
-      // return userWithoutPassword, password;
-      // return userWithoutPassword;
       return { user: userWithoutPassword, password: user.password };
 	} catch (err) {
 		throw new Error(`Error retrieving edited user: ${err}`);
