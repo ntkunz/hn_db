@@ -1,10 +1,13 @@
 const knex = require("knex")(require("./knexfile"));
-const express = require('express');
 const cors = require('cors');
-const app = express();
-const PORT = process.env.PORT || 8080
 const helmet = require("helmet");
+const bcrypt = require("bcryptjs");
 const rateLimit = require("express-rate-limit");
+const express = require('express');
+const app = express();
+const PORT = process.env.PORT || 8080;
+const { protect } = require("./modules/auth");
+
 
 const limiter = rateLimit({
 	// windowMs: 15 * 60 * 1000, // 15 minutes
@@ -19,14 +22,19 @@ app.use(express.json());
 app.use(express.static('public/images'));
 app.use(helmet());
 app.use(limiter);
+app.use(
+	express.urlencoded({
+		extended: true,
+	})
+)
 
 const userRoutes = require('./routes/usersRoute');
 const userSkillsRoutes = require('./routes/userSkillsRoute');
 const messageRoutes = require('./routes/messagesRoute');
 
-app.use('/messages', messageRoutes);
-app.use('/users', userRoutes);
-app.use('/userskills', userSkillsRoutes);
+app.use('/messages', protect, messageRoutes);
+app.use('/users', protect, userRoutes);
+app.use('/userskills', protect, userSkillsRoutes);
 
 app.listen(PORT, () => {
    console.log(`Server is running on port: ${PORT}`);
