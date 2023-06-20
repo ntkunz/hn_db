@@ -166,7 +166,7 @@ exports.getNeighbors = async (req, res) => {
 		return res.status(200).json({ neighbors: neighbors });
 	} catch (err) {
 		// If something goes wrong, return 404 error
-		console.log("1 something went wrong!", err);
+		console.log("error getting neighbors");
 		return res.status(404).send(`Error getting user ${err}`);
 	}
 };
