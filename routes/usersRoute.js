@@ -2,6 +2,33 @@ const router = require('express').Router();
 const usersController = require('../controllers/usersController.js');
 const multer  = require('multer');
 
+router
+.route('/')
+//get all neighbbors route based off of email in auth header and location
+.get(usersController.getNeighbors)
+//edit user route
+.put(usersController.editUser)
+//new user post request route
+.post(usersController.newUser)
+//delete user from database route
+.delete(usersController.deleteUser);
+
+//route to login user
+router
+.route('/login')
+.post(usersController.login);
+
+//route to verify user
+router
+.route('/verify')
+.get(usersController.verifyUser);
+
+//route to check if email exists in database
+router
+.route('/newemail')
+.post(usersController.newEmail);
+
+//all multer file upload route settings and route
 //multer maximum upload size configuration
 const maxSize = 1000000;
 
@@ -20,56 +47,6 @@ let storage = multer.diskStorage({
     storage: storage,
     limits: { fileSize: maxSize }
   });
-
-  //post request to get all nearby users
-// router
-// .route('/')
-// // .put(usersController.getNeighbors)
-// .post(usersController.index);
-
-
-//change to just .get/users
-router
-.route('/getneighbors')
-.get(usersController.getNeighbors);
-
-
-//change to .post/login instead of .post/users/login
-router
-.route('/login')
-.post(usersController.login);
-
-//post request to add new user
-//change to .post/users instead of .post/users/newuser
-router
-.route('/newuser')
-.post(usersController.newUser);
-
-router
-.route('/verify')
-.get(usersController.verifyUser);
-
-//post request to edit user information
-//change to .put/users instead of .post/users/edituser
-router
-.route('/edituser')
-.post(usersController.editUser);
-
-//newEmail to check if email exists in database
-//can I do this as a function in auth.js instead of it being a route?
-router
-.route('/newemail')
-.post(usersController.newEmail);
-
-
-// router
-// .route("/skills/:id")
-// .get(usersController.getUserSkills);
-
-
-// router
-// .route("/skills/")
-// .post(usersController.getUserSkills);
 
 //add image to user route
 router
