@@ -176,6 +176,9 @@ exports.getNeighbors = async (req, res) => {
  * If the email is not in use, returns a 200 status and a message indicating that no user was found.
  * If the email is already in use, returns a 202 status and a message indicating that a user was found.
  * If an error occurs during the search, returns a 400 status and an error message.
+ * @param {Object} req - The request object containing the email to be checked in the body.
+ * @param {Object} res - The response object to be returned.
+ * @returns {Object} - The response object with the appropriate status and message.
  */
 exports.newEmail = async (req, res) => {
 	// Check if email exists in database
