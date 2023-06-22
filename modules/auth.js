@@ -1,13 +1,13 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const dotenv = require("dotenv");
+dotenv.config();
 
 // Create jwt token based off of user including email
-// const createJWT = (email, location) => {
 const createJWT = (email) => {
 	const token = jwt.sign(
 		{
 			email: email,
-			// location: location,
 		},
 		process.env.JWT_SECRET,
 		{ expiresIn: process.env.JWT_EXPIRES_IN }
