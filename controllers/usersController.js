@@ -184,6 +184,7 @@ exports.newEmail = async (req, res) => {
 	// Check if email exists in database
 	try {
 		const foundUser = await knex("users").where(whereClause(req.body.email));
+		
 		if (foundUser.length === 0) {
 			// If email not in use, send 200 status and message
 			return res.status(200).send(`No user found with email ${req.body.email}`);
