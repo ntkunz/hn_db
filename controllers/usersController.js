@@ -28,7 +28,6 @@ exports.login = async (req, res) => {
 	try {
 		// Find user who logged in
 		const foundUser = await getUser(whereClause(email), joinClause);
-
 		// If user not found, return 404 error
 		if (!foundUser) {
 			return res.status(404).send(`Credentials Wrong`);
@@ -50,6 +49,7 @@ exports.login = async (req, res) => {
 		return res.status(200).json({ token, user: foundUser.user });
 	} catch (err) {
 		// If an error occurs, return 400 error
+		console.log(err);
 		return res.status(400).send(`Error logging in`);
 	}
 };
@@ -91,7 +91,6 @@ exports.verifyUser = async (req, res) => {
 		try {
 			// Get user and userskills from database from token email
 			const foundUser = await getUser(whereClause(email), joinClause);
-
 			// If no found user, return 200 and 'token error' else return found user info
 			if (foundUser.length === 0) {
 				return res.status(400).send("token error");
@@ -184,12 +183,13 @@ exports.newEmail = async (req, res) => {
 	// Check if email exists in database
 	try {
 		const foundUser = await knex("users").where(whereClause(req.body.email));
-		
-		if (foundUser.length === 0) {
-			// If email not in use, send 200 status and message
+
+		//if no found user, return status 200 and message (200 so error doesn't stop request)
+		if (!foundUser || foundUser.length === 0) {
 			return res.status(200).send(`No user found with email ${req.body.email}`);
+
+			// If email in use, send 202 status and message (202 so error doesn't stop request)
 		} else {
-			// If email in use, send 202 status and message
 			return res.status(202).send(`User found with email ${req.body.email}`);
 		}
 	} catch (err) {
@@ -276,9 +276,16 @@ exports.editUser = async (req, res) => {
  * @returns {Object} The HTTP response object
  */
 exports.addImage = async (req, res) => {
+	// If no file was uploaded, just return
+	if (!req.file) {
+		return;
+	}
+
 	// Extract the user_id and image_url from the request body and file
 	const { user_id } = req.body;
+
 	const image_url = req.file.filename;
+
 	try {
 		// Update the user's image_url in the database
 		const result = await knex("users").where({ user_id }).update({ image_url });
@@ -305,26 +312,25 @@ exports.deleteUser = async (req, res) => {
 
 	// Check password against user inputed password
 	const pwCheck = await comparePasswords(
-		// req.body.password,
 		userPassword,
 		userDbPassword.password
 	);
 
 	// If password incorrect, return 404 error
 	if (!pwCheck) {
-		// return res.status(404).send(`Credentials Wrong`);
-		return res.status(404).send(`failed password check`);
+		//return 400 if password incorrect
+		return res.status(400).send(`Credentials Wrong`);
 	}
 
 	//confirm received userId matches database userId
 	if (userId !== userDbPassword.user_id) {
-		// return res.status(404).send(`Credentials Wrong`);
-		return res.status(404).send(`failed user id check`);
+		//return 401 if userId does not match
+		return res.status(401).send(`Credentials Wrong`);
 	}
 
 	try {
 		// Delete the user from the database
-		const result = await knex("users").where(whereClause(userEmail)).del();
+		await knex("users").where(whereClause(userEmail)).del();
 
 		// If the delete was successful, return a success message
 		return res.status(200).json({ message: "User deleted successfully" });
