@@ -9,7 +9,7 @@ exports.up = function (knex) {
       table.string('last_name').notNullable();
       table.string('email').notNullable();
       table.string('password').notNullable();
-      table.string('image_url').nullable();
+      table.string('image_url').nullable().defaultTo('https://source.unsplash.com/featured');
       table.string('status').notNullable();
       table.string('home').notNullable();
       table.string('city').notNullable();
