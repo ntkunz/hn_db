@@ -91,9 +91,9 @@ exports.verifyUser = async (req, res) => {
 		try {
 			// Get user and userskills from database from token email
 			const foundUser = await getUser(whereClause(email), joinClause);
-
 			// If no found user, return 200 and 'token error' else return found user info
 			if (foundUser.length === 0) {
+				console.log('oh no')
 				return res.status(400).send("token error");
 			} else {
 				// Return user info to frontend with a 200 status code

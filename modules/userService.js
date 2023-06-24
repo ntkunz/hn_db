@@ -40,13 +40,12 @@ async function getUser(whereClause, joinClause) {
 				)
 			)
 			.groupBy("users.user_id")
-			.where(whereClause)
-			.first();
+			.where(whereClause);
+			// .first();
 
 			// Exclude password from the user object
-		const { password, ...userWithoutPassword } = user;
-		return { user: userWithoutPassword, password: password };
-		// return { user: userWithoutPassword, password: user.password };
+		const { password, ...userWithoutPassword } = user[0];
+		return { user: userWithoutPassword, password: user.password };
 
 	} catch (err) {
 		throw new Error(`Error retrieving edited user: ${err}`);
