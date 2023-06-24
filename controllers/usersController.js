@@ -330,7 +330,7 @@ exports.deleteUser = async (req, res) => {
 
 	try {
 		// Delete the user from the database
-		const result = await knex("users").where(whereClause(userEmail)).del();
+		await knex("users").where(whereClause(userEmail)).del();
 
 		// If the delete was successful, return a success message
 		return res.status(200).json({ message: "User deleted successfully" });
