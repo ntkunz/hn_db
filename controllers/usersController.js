@@ -28,7 +28,6 @@ exports.login = async (req, res) => {
 	try {
 		// Find user who logged in
 		const foundUser = await getUser(whereClause(email), joinClause);
-
 		// If user not found, return 404 error
 		if (!foundUser) {
 			return res.status(404).send(`Credentials Wrong`);
@@ -50,6 +49,7 @@ exports.login = async (req, res) => {
 		return res.status(200).json({ token, user: foundUser.user });
 	} catch (err) {
 		// If an error occurs, return 400 error
+		console.log(err);
 		return res.status(400).send(`Error logging in`);
 	}
 };
@@ -93,7 +93,6 @@ exports.verifyUser = async (req, res) => {
 			const foundUser = await getUser(whereClause(email), joinClause);
 			// If no found user, return 200 and 'token error' else return found user info
 			if (foundUser.length === 0) {
-				console.log('oh no')
 				return res.status(400).send("token error");
 			} else {
 				// Return user info to frontend with a 200 status code
