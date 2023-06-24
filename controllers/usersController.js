@@ -313,21 +313,20 @@ exports.deleteUser = async (req, res) => {
 
 	// Check password against user inputed password
 	const pwCheck = await comparePasswords(
-		// req.body.password,
 		userPassword,
 		userDbPassword.password
 	);
 
 	// If password incorrect, return 404 error
 	if (!pwCheck) {
-		// return res.status(404).send(`Credentials Wrong`);
-		return res.status(404).send(`failed password check`);
+		//return 400 if password incorrect
+		return res.status(400).send(`Credentials Wrong`);
 	}
 
 	//confirm received userId matches database userId
 	if (userId !== userDbPassword.user_id) {
-		// return res.status(404).send(`Credentials Wrong`);
-		return res.status(404).send(`failed user id check`);
+		//return 401 if userId does not match
+		return res.status(401).send(`Credentials Wrong`);
 	}
 
 	try {
