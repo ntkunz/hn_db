@@ -12,7 +12,7 @@ module.exports = {
 	// 	password: process.env.DB_LOCAL_PASSWORD,
 	// },
 	production: {
-		client: "mysql2",
+		client: "mysql",
 		connection: process.env.DATABASE_URL,
 		migrations: {
 			directory: __dirname + "/migrations",
