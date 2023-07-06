@@ -13,7 +13,7 @@ module.exports = {
 	// },
 	production: {
 		client: "mysql2",
-		connection: process.env.CLEARDB_DATABASE_URL,
+		connection: process.env.DATABASE_URL,
 		migrations: {
 			directory: __dirname + "/migrations",
 		},
