@@ -181,22 +181,24 @@ exports.getNeighbors = async (req, res) => {
  */
 exports.newEmail = async (req, res) => {
 	// Check if email exists in database
-	try {
-		const foundUser = await knex("users").where(whereClause(req.body.email));
+	// try {
+	// 	const foundUser = await knex("users").where(whereClause(req.body.email));
 
-		//if no found user, return status 200 and message (200 so error doesn't stop request)
-		if (!foundUser || foundUser.length === 0) {
-			return res.status(200).send(`No user found with email ${req.body.email}`);
+	// 	//if no found user, return status 200 and message (200 so error doesn't stop request)
+	// 	if (!foundUser || foundUser.length === 0) {
+	// 		return res.status(200).send(`No user found with email ${req.body.email}`);
 
-			// If email in use, send 202 status and message (202 so error doesn't stop request)
-		} else {
-			return res.status(202).send(`User found with email ${req.body.email}`);
-		}
-	} catch (err) {
-		// If error occurs, send 400 status and error message
-		// return res.status(400).send(`Error confirming user ${err}`);
-		return res.send(`Error confirming user ${err}`);
-	}
+	// 		// If email in use, send 202 status and message (202 so error doesn't stop request)
+	// 	} else {
+	// 		return res.status(202).send(`User found with email ${req.body.email}`);
+	// 	}
+	// } catch (err) {
+	// 	// If error occurs, send 400 status and error message
+	// 	// return res.status(400).send(`Error confirming user ${err}`);
+	// 	return res.send(`Error confirming user ${err}`);
+	// }
+
+	return next()
 };
 
 /**
