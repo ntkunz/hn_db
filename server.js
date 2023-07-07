@@ -8,6 +8,11 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 const { protect } = require("./modules/auth");
 
+const corsOptions = {
+	origin: 'https://loquacious-vacherin-531c19.netlify.app',
+ };
+ 
+
 
 const limiter = rateLimit({
 	// windowMs: 15 * 60 * 1000, // 15 minutes
@@ -17,9 +22,10 @@ const limiter = rateLimit({
 	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 })
 
-app.use(cors({
-	origin: process.env.CORS_ORIGIN
-}));
+// app.use(cors({
+// 	origin: process.env.CORS_ORIGIN
+// }));
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.static('public/images'));
 app.use(helmet());
