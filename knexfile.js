@@ -11,6 +11,7 @@ module.exports = {
 	// 	user: process.env.DB_LOCAL_USER,
 	// 	password: process.env.DB_LOCAL_PASSWORD,
 	// },
+  client: "mysql2",
 	production: {
 		client: "mysql2",
 		connection: process.env.DATABASE_URL,
