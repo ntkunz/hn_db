@@ -17,7 +17,9 @@ const limiter = rateLimit({
 	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 })
 
-app.use(cors());
+app.use(cors({
+	origin: process.env.CORS_ORIGIN
+}));
 app.use(express.json());
 app.use(express.static('public/images'));
 app.use(helmet());
