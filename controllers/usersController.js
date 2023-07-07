@@ -198,7 +198,7 @@ exports.newEmail = async (req, res) => {
 	// 	return res.send(`Error confirming user ${err}`);
 	// }
 
-	return next()
+	return res.status(200).send('made it past newEmail check'next());
 };
 
 /**
