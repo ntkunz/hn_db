@@ -44,6 +44,9 @@ const messageRoutes = require('./routes/messagesRoute');
 app.use('/messages', protect, messageRoutes);
 app.use('/users', protect, userRoutes);
 app.use('/userskills', protect, userSkillsRoutes);
+app.get('*', (req, res) => {
+	res.sendFile('index.html',{root: __dirname + './../build'});
+});
 
 app.listen(PORT, () => {
    console.log(`Server is running on port: ${PORT}`);
