@@ -194,6 +194,7 @@ exports.newEmail = async (req, res) => {
 		}
 	} catch (err) {
 		// If error occurs, send 400 status and error message
+		console.log('error checking for new email', err);
 		return res.status(400).send(`Error confirming user ${err}`);
 		// return res.statussend(`Error confirming user ${err}`);
 	}
