@@ -51,7 +51,8 @@ async function getUser(whereClause, joinClause) {
 		}
 
 	} catch (err) {
-		throw new Error(`Error retrieving edited user: ${err}`);
+		// throw new Error(`Error retrieving edited user: ${err}`);
+		return null;
 		
 	}
 }
