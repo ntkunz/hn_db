@@ -9,7 +9,8 @@ const PORT = process.env.PORT || 8080;
 const { protect } = require("./modules/auth");
 
 const corsOptions = {
-	origin: "https://loquacious-vacherin-531c19.netlify.app",
+	// origin: "https://loquacious-vacherin-531c19.netlify.app",
+	origin: "*",
 };
 
 const limiter = rateLimit({
