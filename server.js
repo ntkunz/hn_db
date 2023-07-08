@@ -22,9 +22,9 @@ const limiter = rateLimit({
 	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 })
 
-app.use(cors({
-	origin: process.env.CORS_ORIGIN
-}));
+// app.use(cors({
+// 	origin: process.env.CORS_ORIGIN
+// }));
 app.use(cors(corsOptions));
 
 // app.use(cors());
