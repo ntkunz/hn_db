@@ -24,7 +24,7 @@ const limiter = rateLimit({
 // app.use(cors({
 // 	origin: process.env.CORS_ORIGIN
 // }));
-app.use(cors(corsOptions));
+
 app.use(function (req, res, next) {
 	res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
 	res.header(
@@ -33,6 +33,8 @@ app.use(function (req, res, next) {
 	);
 	next();
 });
+
+app.use(cors(corsOptions));
 
 // app.use(cors());
 app.use(express.json());
