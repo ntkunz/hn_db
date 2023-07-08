@@ -181,6 +181,8 @@ exports.getNeighbors = async (req, res) => {
  */
 exports.newEmail = async (req, res) => {
 	// Check if email exists in database
+	console.log('req.body newEmail: ', req.body);
+	console.log('header of req: ', req.headers);
 	try {
 		const foundUser = await knex("users").where(whereClause(req.body.email));
 
