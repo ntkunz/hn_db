@@ -22,12 +22,12 @@ const limiter = rateLimit({
 	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 })
 
-// app.use(cors({
-// 	origin: process.env.CORS_ORIGIN
-// }));
-// app.use(cors(corsOptions));
+app.use(cors({
+	origin: process.env.CORS_ORIGIN
+}));
+app.use(cors(corsOptions));
 
-app.use(cors());
+// app.use(cors());
 app.use(express.json());
 // app.use(express.static('public/images'));
 app.use(express.static(__dirname + './../build'));
