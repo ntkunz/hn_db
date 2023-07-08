@@ -17,7 +17,7 @@ module.exports = {
 	// below used for deployment
 	client: "mysql2",
 	production: {
-		// client: "mysql2",
+		client: "mysql2",
 		connection: process.env.CLEARDB_DATABASE_URL + "?ssl=true",
 		pool: {
 			min: 2,
