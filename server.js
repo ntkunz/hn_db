@@ -24,6 +24,14 @@ const limiter = rateLimit({
 // 	origin: process.env.CORS_ORIGIN
 // }));
 app.use(cors(corsOptions));
+app.use(function (req, res, next) {
+	res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
+	res.header(
+		"Access-Control-Allow-Headers",
+		"Origin, X-Requested-With, Content-Type, Accept"
+	);
+	next();
+});
 
 // app.use(cors());
 app.use(express.json());
@@ -44,6 +52,7 @@ const messageRoutes = require("./routes/messagesRoute");
 app.use("/messages", protect, messageRoutes);
 app.use("/users", protect, userRoutes);
 app.use("/userskills", protect, userSkillsRoutes);
+
 app.get("*", (_req, res) => {
 	res.sendFile("index.html", { root: __dirname + "./../build" });
 });
