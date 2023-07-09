@@ -57,7 +57,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.static('public/images'));
 app.use(express.static(__dirname + "./../build"));
-// app.use(helmet());
+app.use(helmet());
 app.use(limiter);
 app.use(
 	express.urlencoded({
