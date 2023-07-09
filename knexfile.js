@@ -35,7 +35,7 @@ module.exports = {
 
 	// below used for deployment
 	client: "mysql2",
-	production: {
+	// production: {
 		// client: "mysql2",
 		connection: {
 			host: process.env.DATABASE_HOST,
@@ -54,7 +54,7 @@ module.exports = {
 		seeds: {
 			directory: __dirname + "/seeds",
 		},
-	},
+	// },
 };
 		
 		
