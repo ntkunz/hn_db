@@ -10,7 +10,7 @@ const { protect } = require("./modules/auth");
 
 const corsOptions = {
 	// origin: "https://loquacious-vacherin-531c19.netlify.app/*",
-	origin: "https://main--loquacious-vacherin-531c19.netlify.app",
+	origin: "https://main--loquacious-vacherin-531c19.netlify.app/",
 	// origin: "*",
 };
 
@@ -28,7 +28,7 @@ const limiter = rateLimit({
 
 app.use(function (req, res, next) {
 	// res.header("Access-Control-Allow-Origin", "https://loquacious-vacherin-531c19.netlify.app/*"); // update to match the domain you will make the request from
-	res.header("Access-Control-Allow-Origin", "https://main--loquacious-vacherin-531c19.netlify.app"); // update to match the domain you will make the request from
+	res.header("Access-Control-Allow-Origin", "https://main--loquacious-vacherin-531c19.netlify.app/"); // update to match the domain you will make the request from
 	res.header(
 		"Access-Control-Allow-Headers",
 		"Origin, X-Requested-With, Content-Type, Accept"
