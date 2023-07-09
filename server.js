@@ -5,10 +5,9 @@ const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 8080;
 const { protect } = require("./modules/auth");
-
-const corsOptions = {
-	origin: "https://main--loquacious-vacherin-531c19.netlify.app",
-};
+// const corsOptions = {
+// 	origin: "https://main--loquacious-vacherin-531c19.netlify.app",
+// };
 
 const limiter = rateLimit({
 	windowMs: 60 * 1000, // 1 minute
@@ -17,16 +16,19 @@ const limiter = rateLimit({
 	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 
-app.use(function (req, res, next) {
-	res.header("Access-Control-Allow-Origin", "https://main--loquacious-vacherin-531c19.netlify.app"); 
-		res.header(
-		"Access-Control-Allow-Headers",
-		"Origin, X-Requested-With, Content-Type, Accept"
-	);
-	next();
-});
+// app.use(function (req, res, next) {
+// 	res.header("Access-Control-Allow-Origin", "https://main--loquacious-vacherin-531c19.netlify.app"); 
+// 		res.header(
+// 		"Access-Control-Allow-Headers",
+// 		"Origin, X-Requested-With, Content-Type, Accept"
+// 	);
+// 	next();
+// });
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
+
+//CORS for local environment testing below, delete before production
+app.use(cors());
 
 app.use(express.json());
 app.use(express.static('public/images'));
