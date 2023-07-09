@@ -1,4 +1,3 @@
-//require knex and the knex configuration files
 const knexConfig = require("../knexfile");
 const knex = require("knex")(knexConfig);
 
@@ -41,8 +40,6 @@ async function getUser(whereClause, joinClause) {
 			)
 			.groupBy("users.user_id")
 			.where(whereClause);
-
-
 
 			// Exclude password from the user object
 		if (user[0]) {
