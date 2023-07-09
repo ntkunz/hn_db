@@ -34,9 +34,9 @@ module.exports = {
 	//  };
 
 	// below used for deployment
-	// client: "mysql2",
+	client: "mysql2",
 	production: {
-		client: "mysql2",
+		// client: "mysql2",
 		connection: {
 			host: process.env.DATABASE_HOST,
 			user: process.env.DB_USER,
