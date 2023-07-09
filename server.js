@@ -8,6 +8,21 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 const { protect } = require("./modules/auth");
 
+const mysql = require('mysql2');
+
+//SSL SETTING EXAMPLE
+// const connection = mysql.createConnection({
+//   host: 'your-hostname',
+//   user: 'your-username',
+//   password: 'your-password',
+//   database: 'your-database',
+//   ssl: {
+//     ca: 'path/to/ca.pem',
+//     cert: 'path/to/client-cert.pem',
+//     key: 'path/to/client-key.pem',
+//   },
+// });
+
 const corsOptions = {
 	// origin: "https://loquacious-vacherin-531c19.netlify.app/*",
 	origin: "https://main--loquacious-vacherin-531c19.netlify.app",
