@@ -42,8 +42,16 @@ async function getUser(whereClause, joinClause) {
 			.groupBy("users.user_id")
 			.where(whereClause);
 
+
+
 			// Exclude password from the user object
 		if (user[0]) {
+			const userskills = await knex("userskills")
+			.select("skill", "offer")
+			.where("user_id", user[0].user_id);
+
+			user[0].barters = userskills;
+
 		const { password, ...userWithoutPassword } = user[0];
 		return { user: userWithoutPassword, password: password };
 		} else {
