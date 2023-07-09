@@ -42,7 +42,7 @@ module.exports = {
 			user: process.env.DB_USER,
 			password: process.env.DB_PASSWORD,
 			database: process.env.DB_DBNAME,
-			socketPath: '/Applications/MAMP/tmp/mysql/mysql.sock'
+			// socketPath: '/Applications/MAMP/tmp/mysql/mysql.sock'
 		},
 		pool: {
 			min: 2,
