@@ -4,7 +4,7 @@ require("dotenv").config();
  * @type { Object.<string, import("knex").Knex.Config> }
  */
 module.exports = {
-	//below used for local
+	//below used for local--------
 	// 	client: "mysql2",
 	// 	connection: {
 	// 		host: "127.0.0.1",
@@ -14,7 +14,7 @@ module.exports = {
 	// 	},
 	// };
 
-	// below used for deployment
+	// below used for deployment----------
 	client: "mysql2",
 	connection: {
 		host: process.env.DB_HOST,
