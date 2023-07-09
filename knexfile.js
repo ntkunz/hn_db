@@ -18,17 +18,8 @@ module.exports = {
 	client: "mysql2",
 	production: {
 		client: "mysql2",
-
-		connection: {
-			connectionString: process.env.DATABASE_URL,
-			ssl: {
-				rejectUnauthorized: false,
-			},
-			debug: true,
-		},
-
 		// connection: process.env.CLEARDB_DATABASE_URL + "?ssl=true",
-		// connection: process.env.DATABASE_URL,
+		connection: process.env.DATABASE_URL,
 		// connection: {
 		//   host : 'process.env.JAWSDB_URL',
 		//   host : 'process.env.DATABASE_URL',
