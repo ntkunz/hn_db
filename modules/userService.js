@@ -1,4 +1,3 @@
-//require knex and the knex configuration files
 const knexConfig = require("../knexfile");
 const knex = require("knex")(knexConfig);
 
@@ -43,11 +42,23 @@ async function getUser(whereClause, joinClause) {
 			.where(whereClause);
 
 			// Exclude password from the user object
+		if (user[0]) {
+			const userskills = await knex("userskills")
+			.select("skill", "offer")
+			.where("user_id", user[0].user_id);
+
+			user[0].barters = userskills;
+
 		const { password, ...userWithoutPassword } = user[0];
 		return { user: userWithoutPassword, password: password };
+		} else {
+			return null;
+		}
 
 	} catch (err) {
-		throw new Error(`Error retrieving edited user: ${err}`);
+		// throw new Error(`Error retrieving edited user: ${err}`);
+		return null;
+		
 	}
 }
 
