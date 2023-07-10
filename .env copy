@@ -1,4 +1,5 @@
 PORT = 8080
+DB_HOST = 12.0.0.1
 DB_LOCAL_DBNAME = hn_db
 DB_LOCAL_USER = *your mysql username here*
 DB_LOCAL_PASSWORD = *your mysql database password here*

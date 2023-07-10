@@ -29,7 +29,7 @@ exports.login = async (req, res) => {
 		// Find user who logged in
 		const foundUser = await getUser(whereClause(email), joinClause);
 		// If user not found, return 404 error
-		if (!foundUser) {
+		if (!foundUser || foundUser.length === 0) {
 			return res.status(404).send(`Credentials Wrong`);
 		}
 
@@ -181,6 +181,8 @@ exports.getNeighbors = async (req, res) => {
  */
 exports.newEmail = async (req, res) => {
 	// Check if email exists in database
+	console.log('req.body newEmail: ', req.body);
+	console.log('header of req: ', req.headers);
 	try {
 		const foundUser = await knex("users").where(whereClause(req.body.email));
 
@@ -194,8 +196,12 @@ exports.newEmail = async (req, res) => {
 		}
 	} catch (err) {
 		// If error occurs, send 400 status and error message
+		console.log('error checking for new email', err);
 		return res.status(400).send(`Error confirming user ${err}`);
+		// return res.statussend(`Error confirming user ${err}`);
 	}
+
+	// return res.status(200).send('made it past newEmail check');
 };
 
 /**
@@ -222,6 +228,7 @@ exports.newUser = async (req, res) => {
 		first_name: req.body.first_name,
 		last_name: req.body.last_name,
 		location: knex.raw("POINT(?, ?)", [req.body.coords[0], req.body.coords[1]]),
+		// location: knex.raw("POINT(?, ?)", [req.body.location[0], req.body.location[1]]),
 		password: hashedPassword,
 		image_url: req.body.image_url,
 		status: req.body.status,
@@ -230,6 +237,8 @@ exports.newUser = async (req, res) => {
 		province: req.body.province,
 		address: req.body.address,
 	};
+
+	console.log('newUserData: ', newUserData)
 
 	try {
 		await knex("users").insert(newUserData);
