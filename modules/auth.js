@@ -10,25 +10,26 @@ const createJWT = (email) => {
 			email: email,
 		},
 		process.env.JWT_SECRET,
-		// { expiresIn: process.env.JWT_EXPIRES_IN }
 		{ expiresIn: "90d" }
 	);
 	return token;
 };
 
 //protect routes from unauthorized users
-const protect = (req, res, next) => { 
+const protect = (req, res, next) => {
 	const bearer = req.headers.authorization;
 
 	if (!bearer) {
-		//if the route is /users/login, allow access
-		// if (req.originalUrl === "/users/login" || req.originalUrl === "/users/newemail" || req.originalUrl === "/users/newuser") {
-		if (req.originalUrl === "/users/login" || req.originalUrl === "/users/newemail" || req.method === 'POST' && req.originalUrl.startsWith("/users")) {
+		//allow access without bearer token for routes that are before user is logged in
+		if (
+			req.originalUrl === "/users/login" ||
+			req.originalUrl === "/users/newemail" ||
+			(req.method === "POST" && req.originalUrl.startsWith("/users"))
+		) {
 			next();
 			return;
-		};
+		}
 		res.status(401).json({ message: "not authorized" });
-		// res.json({ message: "not authorized" });
 		return;
 	}
 
@@ -72,8 +73,9 @@ const comparePasswords = (password, hash) => {
 };
 
 // retrieve email from token when user returns to site and valid token is present
-const getInfoFromToken = (token) => { 
+const getInfoFromToken = (token) => {
 	try {
+		//TODO: re-evaluate below 2 lines and their purpose, may be slightly unnecessary
 		const tokenObject = JSON.parse(token); // Parse the JSON string into an object
 		const tokenValue = tokenObject.userToken; // Access the 'userToken' property from the object
 
