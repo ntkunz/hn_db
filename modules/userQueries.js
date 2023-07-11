@@ -1,8 +1,6 @@
-//require knex and the knex configuration files
 const knexConfig = require("../knexfile");
 const knex = require("knex")(knexConfig);
 
-// userQueries.js
 const whereClause = (userEmail) => ({ "users.email": userEmail });
 
 const joinClause = {

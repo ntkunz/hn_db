@@ -3,7 +3,6 @@ const knex = require("knex")(knexConfig);
 
 const { whereClause, joinClause, userData } = require("./userQueries");
 
-// Helper function to update user information
 async function updateUser(whereClause, userData) {
 	try {
 		await knex("users").where(whereClause).first().update(userData);
@@ -12,7 +11,7 @@ async function updateUser(whereClause, userData) {
 	}
 }
 
-// Helper function to retrieve edited user information
+// Helper function to retrieve new or edited logged in user information
 async function getUser(whereClause, joinClause) {
 	try {
 		const user = await knex("users")
@@ -41,24 +40,22 @@ async function getUser(whereClause, joinClause) {
 			.groupBy("users.user_id")
 			.where(whereClause);
 
-			// Exclude password from the user object
+		// Retrieve userskills as 'barters' select above is no longer functioning as expected
+		//TODO: Fix userskills join above to not make another call below
 		if (user[0]) {
 			const userskills = await knex("userskills")
-			.select("skill", "offer")
-			.where("user_id", user[0].user_id);
+				.select("skill", "offer")
+				.where("user_id", user[0].user_id);
 
 			user[0].barters = userskills;
 
-		const { password, ...userWithoutPassword } = user[0];
-		return { user: userWithoutPassword, password: password };
+			const { password, ...userWithoutPassword } = user[0];
+			return { user: userWithoutPassword, password: password };
 		} else {
 			return null;
 		}
-
 	} catch (err) {
-		// throw new Error(`Error retrieving edited user: ${err}`);
 		return null;
-		
 	}
 }
 
