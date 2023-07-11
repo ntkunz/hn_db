@@ -7,27 +7,25 @@ const knex = require("knex")(require("../knexfile"));
  * @returns {Promise} - A Promise that resolves to the response object.
  */
 exports.index = async (req, res) => {
-	const senderId = req.body.senderId; // The ID of the sender.
-	const receiverId = req.body.receiverId; // The ID of the receiver.
+	const senderId = req.body.senderId;
+	const receiverId = req.body.receiverId; 
 	if (senderId == undefined || receiverId == undefined) {
-		// If either the sender ID or the receiver ID is missing...
-		return res.status(400).send("Missing sender or receiver id"); // Return an error response.
+		return res.status(400).send("Missing sender or receiver id");
 	}
 	try {
 		// Get all messages between the two users
 		const foundMessages = await knex("messages")
 			.where({ sender_id: senderId, receiver_id: receiverId })
-			.orWhere({ receiver_id: senderId, sender_id: receiverId }); // Get all messages between the two users.
+			.orWhere({ receiver_id: senderId, sender_id: receiverId }); 
 		if (foundMessages) {
-			// If messages are found...
-			return res.status(200).json(foundMessages); // Return a success response with the messages.
+			return res.status(200).json(foundMessages); 
 		} else {
 			console.log("no messages found");
-			return res.status(200).send("No messages found"); // Return a success response with a message indicating no messages were found.
+			return res.status(200).send("No messages found");
 		}
 	} catch (err) {
 		console.error(err);
-		return res.status(400).send(`Error getting messages ${err}`); // Return an error response with a message indicating the error encountered.
+		return res.status(400).send(`Error getting messages ${err}`);
 	}
 };
 
