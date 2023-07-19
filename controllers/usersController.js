@@ -206,8 +206,6 @@ exports.newUser = async (req, res) => {
 		address: req.body.address,
 	};
 
-	console.log('newUserData: ', newUserData)
-
 	try {
 		await knex("users").insert(newUserData);
 		// Create and assign a new token
