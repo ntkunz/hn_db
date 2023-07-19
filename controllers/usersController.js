@@ -295,3 +295,12 @@ exports.deleteUser = async (req, res) => {
 		return res.status(401).json({ error: "Unable to delete user" });
 	}
 };
+
+exports.wakeup = async (_req, res) => {
+	try {
+	return res.status(200).json({ message: "Waking up" });
+	} catch (err) {
+		console.error(err);
+		return res.json({ error: err.message, message: "Unable to wake up" });
+	}
+}

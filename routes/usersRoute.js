@@ -26,6 +26,7 @@ router
 //route to check if email exists in database
 router
 .route('/newemail')
+.get(usersController.wakeup)
 .post(usersController.newEmail);
 
 //all multer file upload route settings and route
