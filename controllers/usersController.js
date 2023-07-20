@@ -214,6 +214,7 @@ exports.newUser = async (req, res) => {
 		return res.status(200).json({ token: token, userId: req.body.user_id });
 	} catch (err) {
 		console.error(err);
+		console.log('error adding new user', err);
 		return res.status(400).send(`Error adding new user ${err}`);
 	}
 };
@@ -235,6 +236,7 @@ exports.editUser = async (req, res) => {
 		const editedUser = await getUser(whereClause(userEmail), joinClause);
 		return res.json(editedUser.user);
 	} catch (err) {
+		console.log('error editing user', err);
 		return res.status(400).send(`Error editing user` + err);
 	}
 };
@@ -261,7 +263,7 @@ exports.addImage = async (req, res) => {
 		}
 		return res.status(200).json({ message: "Image uploaded successfully" });
 	} catch (err) {
-		console.error(err);
+		console.error('error adding image: ', err);
 		return res.status(500).json({ error: err.message });
 	}
 };
@@ -290,6 +292,7 @@ exports.deleteUser = async (req, res) => {
 		await knex("users").where(whereClause(userEmail)).del();
 		return res.status(200).json({ message: "User deleted successfully" });
 	} catch (err) {
+		console.log('error deleting user', err);
 		return res.status(401).json({ error: "Unable to delete user" });
 	}
 };
@@ -299,6 +302,7 @@ exports.wakeup = async (_req, res) => {
 	return res.status(200).json({ message: "Waking up" });
 	} catch (err) {
 		console.error(err);
+		console.log('error waking up', err);
 		return res.json({ error: err.message, message: "Unable to wake up" });
 	}
 }
