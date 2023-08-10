@@ -18,7 +18,7 @@ const userData = (req) => {
 		first_name: req.body.firstName,
 		last_name: req.body.lastName,
 		location: knex.raw("POINT(?, ?)", [req.body.coords[0], req.body.coords[1]]),
-		image_url: req.body.image_url,
+		image_url: req.body.imageUrl,
 		status: req.body.status,
 		home: req.body.home,
 		city: req.body.city,

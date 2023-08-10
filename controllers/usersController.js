@@ -60,19 +60,19 @@ exports.verifyUser = async (req, res) => {
 		const info = getInfoFromToken(splitToken);
 
 		if (info.error) {
-			return res.status(401).json({ error: "token error" });
+			return res.status(401).send("unable to verify user, please sign back in");
 		}
 
 		// Check token is not expired
 		const currentTimestamp = Math.floor(Date.now() / 1000); // Get the current timestamp in seconds
 		if (info.exp && info.exp < currentTimestamp) {
-			return res.status(401).json({ error: "token error" });
+			return res.status(401).send("token is expired, please sign back in");
 		}
 
 		const email = info.email;
 
 		if (!email) {
-			return res.status(401).json({ error: "token error" });
+			return res.status(401).send("no email found in token");
 		}
 
 		try {
@@ -83,7 +83,8 @@ exports.verifyUser = async (req, res) => {
 				return res.status(200).json(foundUser.user);
 			}
 		} catch (err) {
-			return res.status(400).json({ error: "token error" });
+			console.log("token verifying user: ", err);
+			return res.status(400).send("error verifying user: ", err);
 		}
 	}
 };
@@ -102,7 +103,8 @@ exports.getNeighbors = async (req, res) => {
 	const info = getInfoFromToken(splitToken);
 
 	if (info.error) {
-		return res.status(401).json({ error: info.error });
+		console.log("error getting user from token: ", info.error);
+		return res.status(401).send(`Error getting info from user token`);
 	}
 
 	try {
@@ -144,8 +146,8 @@ exports.getNeighbors = async (req, res) => {
 
 		return res.status(200).json({ neighbors: neighbors });
 	} catch (err) {
-		console.log("error getting neighbors");
-		return res.status(404).send(`Error getting user ${err}`);
+		console.log("error getting neighbors: ", err);
+		return res.status(404).send(`Error getting user`);
 	}
 };
 
@@ -164,13 +166,12 @@ exports.newEmail = async (req, res) => {
 
 		if (!foundUser || foundUser.length === 0) {
 			return res.status(200).send(`No user found with email ${req.body.email}`);
-
 		} else {
 			return res.status(202).send(`User found with email ${req.body.email}`);
 		}
 	} catch (err) {
-		console.log('error checking for new email', err);
-		return res.status(400).send(`Error confirming user ${err}`);
+		console.log("error checking for new email: ", err);
+		return res.status(400).send(`Error confirming user`);
 	}
 };
 
@@ -191,14 +192,14 @@ exports.newUser = async (req, res) => {
 	const hashedPassword = await hashPassword(req.body.password);
 
 	const newUserData = {
-		user_id: req.body.user_id,
+		user_id: req.body.userId,
 		about: req.body.about,
 		email: req.body.email,
-		first_name: req.body.first_name,
-		last_name: req.body.last_name,
+		first_name: req.body.firstName,
+		last_name: req.body.lastName,
 		location: knex.raw("POINT(?, ?)", [req.body.coords[0], req.body.coords[1]]),
 		password: hashedPassword,
-		image_url: req.body.image_url,
+		image_url: req.body.imageUrl,
 		status: req.body.status,
 		home: req.body.home,
 		city: req.body.city,
@@ -211,11 +212,11 @@ exports.newUser = async (req, res) => {
 		// Create and assign a new token
 		const token = createJWT(req.body.email);
 		// return user and auth token with user_id to client
-		return res.status(200).json({ token: token, userId: req.body.user_id });
+		return res.status(200).json({ token: token, userId: req.body.userId });
 	} catch (err) {
 		console.error(err);
-		console.log('error adding new user', err);
-		return res.status(400).send(`Error adding new user ${err}`);
+		console.log("error adding new user: ", err);
+		return res.status(400).send(`Error adding new user`);
 	}
 };
 
@@ -236,7 +237,7 @@ exports.editUser = async (req, res) => {
 		const editedUser = await getUser(whereClause(userEmail), joinClause);
 		return res.json(editedUser.user);
 	} catch (err) {
-		console.log('error editing user', err);
+		console.log("error editing user", err);
 		return res.status(400).send(`Error editing user` + err);
 	}
 };
@@ -263,46 +264,43 @@ exports.addImage = async (req, res) => {
 		}
 		return res.status(200).json({ message: "Image uploaded successfully" });
 	} catch (err) {
-		console.error('error adding image: ', err);
-		return res.status(500).json({ error: err.message });
+		console.error("error adding image: ", err);
+		return res.status(500).send("error adding image");
 	}
 };
 
 exports.deleteUser = async (req, res) => {
-	const userEmail = req.body.email;
-	const userId = req.body.userId;
-	const userPassword = req.body.password;
+	const user_email = req.body.email;
+	const user_id = req.body.userId;
+	const user_password = req.body.password;
 
-	const userDbPassword = await getUserPassword(whereClause(userEmail));
+	const user_db_password = await getUserPassword(whereClause(user_email));
 
-	const pwCheck = await comparePasswords(
-		userPassword,
-		userDbPassword.password
-	);
+	const pwCheck = await comparePasswords(user_password, user_db_password.password);
 
 	if (!pwCheck) {
 		return res.status(400).send(`Credentials Wrong`);
 	}
 
-	if (userId !== userDbPassword.user_id) {
+	if (user_id !== user_db_password.user_id) {
 		return res.status(401).send(`Credentials Wrong`);
 	}
 
 	try {
-		await knex("users").where(whereClause(userEmail)).del();
+		await knex("users").where(whereClause(user_email)).del();
 		return res.status(200).json({ message: "User deleted successfully" });
 	} catch (err) {
-		console.log('error deleting user', err);
+		console.log("error deleting user", err);
 		return res.status(401).json({ error: "Unable to delete user" });
 	}
 };
 
 exports.wakeup = async (_req, res) => {
 	try {
-	return res.status(200).json({ message: "Waking up" });
+		return res.status(200).json({ message: "Waking up" });
 	} catch (err) {
 		console.error(err);
-		console.log('error waking up', err);
-		return res.json({ error: err.message, message: "Unable to wake up" });
+		console.log("error waking up", err);
+		return res.send('error waking up the server')
 	}
-}
+};

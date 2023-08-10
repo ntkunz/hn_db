@@ -36,8 +36,7 @@ const limiter = rateLimit({
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.static("public/images"));
-//below left here until certain routing will work without it
-// app.use(express.static(__dirname + "./../build"));
+app.use(express.static(__dirname + "./../build"));
 app.use(helmet());
 app.use(limiter);
 app.use(
