@@ -199,7 +199,7 @@ exports.newUser = async (req, res) => {
 		last_name: req.body.lastName,
 		location: knex.raw("POINT(?, ?)", [req.body.coords[0], req.body.coords[1]]),
 		password: hashedPassword,
-		image_url: req.body.imageUrl,
+		image_url: req.body.image_url,
 		status: req.body.status,
 		home: req.body.home,
 		city: req.body.city,
@@ -276,7 +276,10 @@ exports.deleteUser = async (req, res) => {
 
 	const user_db_password = await getUserPassword(whereClause(user_email));
 
-	const pwCheck = await comparePasswords(user_password, user_db_password.password);
+	const pwCheck = await comparePasswords(
+		user_password,
+		user_db_password.password
+	);
 
 	if (!pwCheck) {
 		return res.status(400).send(`Credentials Wrong`);
@@ -301,6 +304,6 @@ exports.wakeup = async (_req, res) => {
 	} catch (err) {
 		console.error(err);
 		console.log("error waking up", err);
-		return res.send('error waking up the server')
+		return res.send("error waking up the server");
 	}
 };
