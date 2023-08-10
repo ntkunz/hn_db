@@ -6,15 +6,18 @@ const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 8080;
 const { protect } = require("./modules/auth");
-const whitelist = process.env.WHITELISTED_CLIENTS.split(",");
+// const whitelist = process.env.WHITELISTED_CLIENTS.split(",");
+// const corsOptions = {
+// 	origin: function (origin, callback) {
+// 		if (whitelist.indexOf(origin) !== -1) {
+// 			callback(null, true);
+// 		} else {
+// 			callback(new Error("Not allowed by CORS"));
+// 		}
+// 	},
+// };
 const corsOptions = {
-	origin: function (origin, callback) {
-		if (whitelist.indexOf(origin) !== -1) {
-			callback(null, true);
-		} else {
-			callback(new Error("Not allowed by CORS"));
-		}
-	},
+	origin: process.env.CLIENT_URL,
 };
 
 const limiter = rateLimit({
@@ -22,6 +25,15 @@ const limiter = rateLimit({
 	max: 60, // Limit each IP to 60 requests per `window` (here, per 1 minute)
 	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
 	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
+
+app.use(function (req, res, next) {
+	res.header("Access-Control-Allow-Origin", process.env.CLIENT_URL);
+	res.header(
+		"Access-Control-Allow-Headers",
+		"Origin, X-Requested-With, Content-Type, Accept"
+	);
+	next();
 });
 
 // app.use(function (req, res, next) {
@@ -44,7 +56,7 @@ const limiter = rateLimit({
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.static("public/images"));
-app.use(express.static(__dirname + "./../build"));
+// app.use(express.static(__dirname + "./../build"));
 app.use(helmet());
 app.use(limiter);
 app.use(
