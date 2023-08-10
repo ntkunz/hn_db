@@ -25,19 +25,19 @@ const limiter = rateLimit({
 });
 
 app.use(function (req, res, next) {
-	if (whitelist.indexOf(req.headers.origin) !== -1) {
-		res.header("Access-Control-Allow-Origin", req.headers.origin);
-		res.header(
-			"Access-Control-Allow-Headers",
-			"Origin, X-Requested-With, Content-Type, Accept"
-		);
-	}
+	// if (whitelist.indexOf(req.headers.origin) !== -1) {
+	// 	res.header("Access-Control-Allow-Origin", req.headers.origin);
+	// 	res.header(
+	// 		"Access-Control-Allow-Headers",
+	// 		"Origin, X-Requested-With, Content-Type, Accept"
+	// 	);
+	// }
 
-	// res.header("Access-Control-Allow-Origin", corsOptions.origin);
-	// res.header(
-	// 	"Access-Control-Allow-Headers",
-	// 	"Origin, X-Requested-With, Content-Type, Accept"
-	// );
+	res.header("Access-Control-Allow-Origin", process.env_CLIENT_URL);
+	res.header(
+		"Access-Control-Allow-Headers",
+		"Origin, X-Requested-With, Content-Type, Accept"
+	);
 	next();
 });
 
