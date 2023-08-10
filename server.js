@@ -24,14 +24,14 @@ const limiter = rateLimit({
 	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 
-// app.use(function (req, res, next) {
-// 	res.header("Access-Control-Allow-Origin", process.env.CLIENT_URL);
-// 	res.header(
-// 		"Access-Control-Allow-Headers",
-// 		"Origin, X-Requested-With, Content-Type, Accept"
-// 	);
-// 	next();
-// });
+app.use(function (req, res, next) {
+	res.header("Access-Control-Allow-Origin", process.env.CLIENT_URL);
+	res.header(
+		"Access-Control-Allow-Headers",
+		"Origin, X-Requested-With, Content-Type, Accept"
+	);
+	next();
+});
 
 app.use(cors(corsOptions));
 app.use(express.json());
