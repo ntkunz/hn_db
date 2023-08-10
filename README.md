@@ -1,21 +1,17 @@
 # hn_db
 
-Welcome to the Helping Neighbors express server.
+Welcome to the Helping Neighbors Express server.
 
-This server, once deployed, will only respond to requests from the Helping Neighbors app. To run locally, feel free to follow the instructions at the app's front-end repo at <a href="https://github.com/ntkunz/helping_neighbors">Helping Neighbors</a>. 
+While this repo is open to the public, the server is set to only respond to requests from the live beta [Helping Neighbors](https://www.helping-neighbors.nicholaskunz.com) app :couple: :hammer: :dizzy:. 
 
-When a user signs up the email is first checked with a **post** to **/users/newemail**, their address is geocoded, then the new profile is saved through a **post** to **/users**
+When a user signs up with a unique email address their location (along with all other data) is stored in the helping neighbors MySQL database. Logged in users will be returned all users within a 1/2 kilometer of their address. A logged in user can then message any of their neighbors to enquire about bartering services or goods. 
 
-After signing up or logging in (where user is verified), user is returned a token and user object. That token is used in a **.get** request to **/users** to return all users in the database who are within 1/2 kilometer of the user. 
+All passwords are hashed and salted, all user input is validated and sanitized, all routes that return data are protected and all calls are rate limited with the help of some great node packages. 
 
-Users can message their neighbors, all previous messages with another user are returned whenever the logged in user selects a neighbor's card, which triggers a **.put** request to **/messages** with the user and neighbor's ids. 
+There are some more controls and routes I will be adding soon, and there is much refactoring to be done as this is very much a functioning work in progress. Please enjoy the site and if you are inclined to peek around the code, please send me a message with any feedback you have. 
 
-Each new message is added to the database through a **post** request to **/messages** with each user's id and the message. 
+See the frontend repository for the site [here](https://github.com/ntkunz/helping_neighbors). 
 
-Users can edit their profile information with a **put** request to **/users** with their updated profile information in the body.
 
-Users can delete their account with a **delete** request to **/users** along with their token and password.
+:incoming_envelope: mrnicholaskunz@gmail.com
 
-Images are uploaded using Multer. Rate limiting done with Express Rate Limit, encryption done with Bcrypt, and routes protected using Cors. 
-
-Deployment coming soon. 
