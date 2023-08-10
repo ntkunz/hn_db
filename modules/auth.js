@@ -10,7 +10,7 @@ const createJWT = (email) => {
 			email: email,
 		},
 		process.env.JWT_SECRET,
-		{ expiresIn: "90d" }
+		{ expiresIn: process.env.JWT_EXPIRES_IN }
 	);
 	return token;
 };
