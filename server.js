@@ -24,22 +24,22 @@ const limiter = rateLimit({
 	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 
-app.use(function (req, res, next) {
-	// if (whitelist.indexOf(req.headers.origin) !== -1) {
-	// 	res.header("Access-Control-Allow-Origin", req.headers.origin);
-	// 	res.header(
-	// 		"Access-Control-Allow-Headers",
-	// 		"Origin, X-Requested-With, Content-Type, Accept"
-	// 	);
-	// }
+// app.use(function (req, res, next) {
+// 	// if (whitelist.indexOf(req.headers.origin) !== -1) {
+// 	// 	res.header("Access-Control-Allow-Origin", req.headers.origin);
+// 	// 	res.header(
+// 	// 		"Access-Control-Allow-Headers",
+// 	// 		"Origin, X-Requested-With, Content-Type, Accept"
+// 	// 	);
+// 	// }
 
-	res.header("Access-Control-Allow-Origin", process.env_CLIENT_URL);
-	res.header(
-		"Access-Control-Allow-Headers",
-		"Origin, X-Requested-With, Content-Type, Accept"
-	);
-	next();
-});
+// 	res.header("Access-Control-Allow-Origin", process.env_CLIENT_URL);
+// 	res.header(
+// 		"Access-Control-Allow-Headers",
+// 		"Origin, X-Requested-With, Content-Type, Accept"
+// 	);
+// 	next();
+// });
 
 app.use(cors(corsOptions));
 app.use(express.json());
