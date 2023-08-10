@@ -32,11 +32,11 @@ async function getUser(whereClause, joinClause) {
 				"users.address",
 				"users.created_at"
 			)
-			.select(
-				knex.raw(
-					"JSON_OBJECTAGG(userskills.skill, userskills.offer) as barters"
-				)
-			)
+			// .select(
+			// 	knex.raw(
+			// 		"JSON_OBJECTAGG(userskills.skill, userskills.offer) as barters"
+			// 	)
+			// )
 			.groupBy("users.user_id")
 			.where(whereClause);
 

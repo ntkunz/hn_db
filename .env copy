@@ -1,8 +1,8 @@
 PORT = 8080
-DB_HOST = 12.0.0.1
-DB_LOCAL_DBNAME = hn_db
-DB_LOCAL_USER = *your mysql username here*
-DB_LOCAL_PASSWORD = *your mysql database password here*
-CORS_ORIGIN = http://localhost:3000
+DATABASE_URL = *the database url*
+DB_DBNAME = *your database name*
+DB_USER = *your mysql username here*
+DB_PASSWORD = *your mysql database password here*
 JWT_SECRET = *add a secret code here*
 JWT_EXPIRES_IN = *an amount of time*
+WHITELISTED_CLIENTS = *either one or a comma separated list of clients allowed to access the database*
