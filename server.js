@@ -26,7 +26,7 @@ const limiter = rateLimit({
 
 // app.use(function (req, res, next) {
 // 	res.header("Access-Control-Allow-Origin", process.env.CLIENT_URL);
-// 		res.header(
+// 	res.header(
 // 		"Access-Control-Allow-Headers",
 // 		"Origin, X-Requested-With, Content-Type, Accept"
 // 	);
