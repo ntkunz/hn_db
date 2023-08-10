@@ -6,7 +6,6 @@ const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 8080;
 const { protect } = require("./modules/auth");
-
 const whitelist = process.env.WHITELISTED_CLIENTS.split(",");
 const corsOptions = {
 	origin: function (origin, callback) {
