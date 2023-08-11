@@ -38,8 +38,7 @@ async function getUser(whereClause, joinClause) {
 				)
 			)
 			.groupBy("users.user_id")
-			// .where(whereClause);
-			.where("users.email", userEmail);
+			.where(whereClause);
 		console.log("user: ", user);
 		// Retrieve userskills as 'barters' select above is no longer functioning as expected
 		//TODO: Fix userskills join above to not make another call below
