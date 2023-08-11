@@ -195,11 +195,11 @@ exports.newUser = async (req, res) => {
 	const hashedPassword = await hashPassword(req.body.password);
 
 	const newUserData = {
-		user_id: req.body.user_id,
+		user_id: req.body.userId,
 		about: req.body.about,
 		email: req.body.email,
-		first_name: req.body.first_name,
-		last_name: req.body.last_name,
+		first_name: req.body.firstName,
+		last_name: req.body.lastName,
 		location: knex.raw("POINT(?, ?)", [req.body.coords[0], req.body.coords[1]]),
 		password: hashedPassword,
 		image_url: req.body.image_url,
