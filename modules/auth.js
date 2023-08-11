@@ -21,7 +21,7 @@ const protect = (req, res, next) => {
 	if (
 		req.originalUrl === "/users/login" ||
 		req.originalUrl === "/users/newemail" ||
-		req.originUrl === "/users/verify" ||
+		// req.originUrl === "/users/verify" ||
 		(req.method === "POST" && req.originalUrl.startsWith("/users"))
 	) {
 		next();
