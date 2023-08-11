@@ -26,6 +26,7 @@ exports.login = async (req, res) => {
 	try {
 		const foundUser = await getUser(whereClause(email), joinClause);
 		if (!foundUser || foundUser.length === 0) {
+			console.log("No user found during login");
 			return res.status(404).send(`Credentials Wrong`);
 		}
 
@@ -35,6 +36,7 @@ exports.login = async (req, res) => {
 		);
 
 		if (!pwCheck) {
+			console.log("Password failed check at login");
 			return res.status(404).send(`Credentials Wrong`);
 		}
 
