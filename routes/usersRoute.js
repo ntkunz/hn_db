@@ -4,19 +4,26 @@ const multer  = require('multer');
 
 router
 .route('/')
+//get all neighbbors route based off of email in auth header and location
 .get(usersController.getNeighbors)
+//edit user route
 .put(usersController.editUser)
+//new user post request route
 .post(usersController.newUser)
+//delete user from database route
 .delete(usersController.deleteUser);
 
+//route to login user
 router
 .route('/login')
 .post(usersController.login);
 
+//route to verify user
 router
 .route('/verify')
 .get(usersController.verifyUser);
 
+//route to check if email exists in database
 router
 .route('/newemail')
 .get(usersController.wakeup)
