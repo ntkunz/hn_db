@@ -39,7 +39,7 @@ async function getUser(whereClause, joinClause) {
 			)
 			.groupBy("users.user_id")
 			.where(whereClause);
-
+		console.log("user: ", user);
 		// Retrieve userskills as 'barters' select above is no longer functioning as expected
 		//TODO: Fix userskills join above to not make another call below
 		if (user[0]) {
@@ -48,7 +48,7 @@ async function getUser(whereClause, joinClause) {
 				.where("user_id", user[0].user_id);
 
 			user[0].barters = userskills;
-
+			console.log("user[0]: ", user[0]);
 			const { password, ...userWithoutPassword } = user[0];
 			return { user: userWithoutPassword, password: password };
 		} else {
