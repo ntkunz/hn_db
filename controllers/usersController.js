@@ -30,7 +30,7 @@ exports.login = async (req, res) => {
 			console.log("No user found during login");
 			return res.status(404).send(`Credentials Wrong`);
 		}
-
+		console.log("req.body.password: ", req.body.password);
 		const pwCheck = await comparePasswords(
 			req.body.password,
 			foundUser.password
