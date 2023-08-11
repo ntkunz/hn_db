@@ -71,6 +71,7 @@ const hashPassword = (password) => {
 
 //compare passwords
 const comparePasswords = (password, hash) => {
+	console.log("password compare: ", bcrypt.compare(password, hash));
 	return bcrypt.compare(password, hash);
 };
 
