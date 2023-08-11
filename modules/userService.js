@@ -52,10 +52,10 @@ async function getUser(whereClause, joinClause) {
 			const { password, ...userWithoutPassword } = user[0];
 			return { user: userWithoutPassword, password: password };
 		} else {
-			return null;
+			return { user: userWithoutPassword, password: password };
 		}
 	} catch (err) {
-		return null;
+		return "ut oh login error!";
 	}
 }
 
