@@ -10,7 +10,8 @@ const createJWT = (email) => {
 			email: email,
 		},
 		process.env.JWT_SECRET,
-		{ expiresIn: process.env.JWT_EXPIRES_IN }
+		// { expiresIn: process.env.JWT_EXPIRES_IN }
+		{ expiresIn: "90d" }
 	);
 	return token;
 };
@@ -21,7 +22,7 @@ const protect = (req, res, next) => {
 	if (
 		req.originalUrl === "/users/login" ||
 		req.originalUrl === "/users/newemail" ||
-		// req.originUrl === "/users/verify" ||
+		req.originUrl === "/users/verify" ||
 		(req.method === "POST" && req.originalUrl.startsWith("/users"))
 	) {
 		next();
