@@ -21,6 +21,7 @@ let emailRregex =
 let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
 
 exports.login = async (req, res) => {
+	console.log("req.body: ", req.body);
 	const email = req.body.email;
 
 	try {
