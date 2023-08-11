@@ -71,9 +71,7 @@ const hashPassword = (password) => {
 
 //compare passwords
 const comparePasswords = async (password, hash) => {
-	// return bcrypt.compare(password, hash);
-	let isItTrue = await bcrypt.compare(password, hash);
-	console.log("isItTrue?: ", isItTrue);
+	return bcrypt.compare(password, hash);
 };
 
 // retrieve email from token when user returns to site and valid token is present
