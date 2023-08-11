@@ -18,20 +18,20 @@ const createJWT = (email) => {
 
 //protect routes from unauthorized users
 const protect = (req, res, next) => {
-	//allow access without bearer token for routes that are before user is logged in
-	if (
-		req.originalUrl === "/users/login" ||
-		req.originalUrl === "/users/newemail" ||
-		req.originUrl === "/users/verify" ||
-		(req.method === "POST" && req.originalUrl.startsWith("/users"))
-	) {
-		next();
-		return;
-	}
-
 	const bearer = req.headers.authorization;
 
 	if (!bearer) {
+		//allow access without bearer token for routes that are before user is logged in
+		if (
+			req.originalUrl === "/users/login" ||
+			req.originalUrl === "/users/newemail" ||
+			req.originUrl === "/users/verify" ||
+			(req.method === "POST" && req.originalUrl.startsWith("/users"))
+		) {
+			next();
+			return;
+		}
+		console.log("not authorized auth.js");
 		res.status(401).json({ message: "not authorized" });
 		return;
 	}
