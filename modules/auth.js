@@ -70,9 +70,9 @@ const hashPassword = (password) => {
 };
 
 //compare passwords
-const comparePasswords = (password, hash) => {
+const comparePasswords = async (password, hash) => {
 	// return bcrypt.compare(password, hash);
-	let isItTrue = bcrypt.compare(password, hash);
+	let isItTrue = await bcrypt.compare(password, hash);
 	console.log("isItTrue?: ", isItTrue);
 };
 
