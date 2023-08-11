@@ -12,7 +12,7 @@ async function updateUser(whereClause, userData) {
 }
 
 // Helper function to retrieve new or edited logged in user information
-async function getUser(whereClause, joinClause) {
+async function getUser(email, joinClause) {
 	try {
 		const user = await knex("users")
 			.join(joinClause.table, joinClause.joinCondition)
@@ -38,7 +38,7 @@ async function getUser(whereClause, joinClause) {
 				)
 			)
 			.groupBy("users.user_id")
-			.where(whereClause);
+			.where(whereClause(email));
 		console.log("user: ", user);
 		// Retrieve userskills as 'barters' select above is no longer functioning as expected
 		//TODO: Fix userskills join above to not make another call below
