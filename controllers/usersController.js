@@ -42,7 +42,8 @@ exports.login = async (req, res) => {
 				"users.address",
 				"users.created_at"
 			)
-			.where("users.email", userEmail);
+			.where("users.email", userEmail)
+			.first();
 
 		// const foundUser = await getUser(email, joinClause);
 		console.log("foundUser: ", foundUser);
@@ -51,7 +52,7 @@ exports.login = async (req, res) => {
 			return res.status(404).send(`Credentials Wrong`);
 		}
 
-		const passwordValid = comparePasswords(password, foundUser);
+		const passwordValid = comparePasswords(req.body.password, foundUser);
 		if (!passwordValid) {
 			return res.status(401).json({ message: "Invalid password" });
 		}
