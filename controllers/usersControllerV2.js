@@ -31,10 +31,10 @@ exports.verifyLogin = async (req, res) => {
 	//    - return status okay if all okay
 };
 
-exports.login = async (req, res) => {
-	// async await
-	// #2 - error if no user in system or if passwords don't match
-	// #3 - get user and userSkills
-	// #4 - create JWT with user info
-	// #5 - return the JWT
-};
+// exports.login = async (req, res) => {
+// 	// async await
+// 	// #2 - error if no user in system or if passwords don't match
+// 	// #3 - get user and userSkills
+// 	// #4 - create JWT with user info
+// 	// #5 - return the JWT
+// };
