@@ -7,4 +7,4 @@ const usersControllerV2 = require("../controllers/usersControllerV2.js");
 router
 	.route("/")
 	// .get(usersControllerV2.loginUser)
-	.post(verifyLogin);
+	.post(usersControllerV2.verifyLogin);
