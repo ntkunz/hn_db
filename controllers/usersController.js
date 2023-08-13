@@ -53,7 +53,8 @@ exports.login = async (req, res) => {
 			)
 			.groupBy("users.user_id")
 
-			.where({ email: userEmail });
+			// .where({ email: userEmail });
+			.where("users.email", userEmail);
 
 		// const foundUser = await getUser(email, joinClause);
 		console.log("foundUser: ", foundUser);
