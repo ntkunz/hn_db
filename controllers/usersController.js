@@ -60,6 +60,20 @@ exports.login = async (req, res) => {
 			return res.status(401).json({ message: "Invalid password" });
 		}
 
+		const loggedInUserSkills = await knex("userskills")
+			.select("skill", "offer")
+			.where("user_id", foundUser.user_id);
+
+		foundUser.barters = userskills;
+		console.log("foundUser with skills: ", foundUser);
+
+		delete foundUser.password;
+
+		console.log("foundUser without password: ", foundUser);
+
+		// const { password, ...userWithoutPassword } = foundUser;
+		// return { user: userWithoutPassword, password: password };
+
 		// console.log("req.body.password: ", req.body.password);
 		// const pwCheck = await comparePasswords(
 		// 	req.body.password,
@@ -71,10 +85,10 @@ exports.login = async (req, res) => {
 		// 	return res.status(404).send(`Credentials Wrong`);
 		// }
 
-		return res.status(200).json({ user: foundUser });
+		// return res.status(200).json({ user: foundUser });
 
-		// const token = createJWT(foundUser.user.email);
-		// return res.status(200).json({ token, user: foundUser.user });
+		const token = createJWT(foundUser.user.email);
+		return res.status(200).json({ token, user: foundUser });
 	} catch (err) {
 		console.log(err);
 		return res.status(400).send(`Error logging in`);
