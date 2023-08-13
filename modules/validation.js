@@ -1,4 +1,4 @@
-const yup = reuire("yup");
+const yup = require("yup");
 
 const validate = (schema) => async (req, res, next) => {
 	try {
