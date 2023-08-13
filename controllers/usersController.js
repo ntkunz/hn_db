@@ -26,7 +26,6 @@ exports.login = async (req, res) => {
 	console.log("req.body.email: ", email);
 
 	try {
-		// const foundUser = await getUser(whereClause(email), joinClause);
 		const foundUser = await getUser(email, joinClause);
 		console.log("foundUser: ", foundUser);
 		if (!foundUser || foundUser.length === 0) {

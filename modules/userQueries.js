@@ -1,6 +1,9 @@
 const knexConfig = require("../knexfile");
 const knex = require("knex")(knexConfig);
 
+// ===========V2 QUERIES===========
+
+// =============V1 QUERIES============
 const whereClause = (userEmail) => ({ "users.email": userEmail });
 
 const joinClause = {

@@ -69,10 +69,14 @@ app.use(
 const userRoutes = require("./routes/usersRoute");
 const userSkillsRoutes = require("./routes/userSkillsRoute");
 const messageRoutes = require("./routes/messagesRoute");
+// const userRoutesV2 = require("./routes/usersRouteV2");
+const authRoutesV2 = require("./routes/authRoutesV2");
 
 app.use("/messages", protect, messageRoutes);
 app.use("/users", protect, userRoutes);
 app.use("/userskills", protect, userSkillsRoutes);
+// app.use("/users/v2", protect, userRoutesV2);
+app.use("/v2/auth", authRoutesV2);
 
 //catch-all to make sure all routes work since frontend is single page application
 app.get("*", (_req, res) => {

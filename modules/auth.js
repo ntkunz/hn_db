@@ -3,6 +3,20 @@ const bcrypt = require("bcryptjs");
 const dotenv = require("dotenv");
 dotenv.config();
 
+// ============ version 2 =========
+
+const createLoginJWT = (userId) => {
+	const loginTokenCreated = jwt.sign(
+		{ userId: userId },
+		process.env.JWT_SECRET,
+		{
+			expiresIn: process.env.JWT_EXPIRES_IN,
+		}
+	);
+	return loginTokenCreated;
+};
+
+// ============= version 1 ===========
 // Create jwt token based off of user including email
 const createJWT = (email) => {
 	const token = jwt.sign(
@@ -71,8 +85,8 @@ const hashPassword = (password) => {
 };
 
 //compare passwords
-const comparePasswords = async (password, hash) => {
-	return bcrypt.compare(password, hash);
+const comparePasswords = async (password, hashedPassword) => {
+	return bcrypt.compare(password, hashedPassword);
 };
 
 // retrieve email from token when user returns to site and valid token is present
@@ -104,6 +118,7 @@ const getInfoFromToken = (token) => {
 
 //export all modules
 module.exports = {
+	createLoginJWT,
 	createJWT,
 	protect,
 	comparePasswords,
