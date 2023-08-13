@@ -22,11 +22,36 @@ let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
 
 exports.login = async (req, res) => {
 	console.log("req.body: ", req.body);
-	const email = req.body.email;
+	const userEmail = req.body.email;
 	console.log("req.body.email: ", email);
 
 	try {
-		const foundUser = await getUser(email, joinClause);
+		const foundUser = await knex("users")
+			.join("userkills", "users.user_id", "=", "userskills.user_id")
+			.select(
+				"users.user_id",
+				"users.about",
+				"users.email",
+				"users.first_name",
+				"users.last_name",
+				"users.location",
+				"users.image_url",
+				"users.status",
+				"users.password",
+				"users.home",
+				"users.city",
+				"users.province",
+				"users.address",
+				"users.created_at"
+			)
+			.select(
+				knex.raw(
+					"JSON_OBJECTAGG(userskills.skill, userskills.offer) as barters"
+				)
+			)
+			.where({ email: userEmail });
+
+		// const foundUser = await getUser(email, joinClause);
 		console.log("foundUser: ", foundUser);
 		if (!foundUser || foundUser.length === 0) {
 			console.log("No user found during login");
