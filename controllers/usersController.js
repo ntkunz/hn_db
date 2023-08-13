@@ -47,7 +47,9 @@ exports.login = async (req, res) => {
 				"users.created_at",
 				// "userskills.skill",
 				// "userskills.offer"
-				knex.raw("GROUP_CONCAT(userskills.skill, userskills.offer) as barters")
+				knex.raw(
+					"JSON_OBJECTAGG(userskills.skill, userskills.offer) as barters"
+				)
 			)
 			.groupBy("users.user_id")
 
