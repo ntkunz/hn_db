@@ -1,4 +1,4 @@
-import { object, string } from "yup";
+const yup = reuire("yup");
 
 const validate = (schema) => async (req, res, next) => {
 	try {
@@ -14,9 +14,10 @@ const validate = (schema) => async (req, res, next) => {
 };
 
 const loginSchema = object({
-	body: object({
-		email: string().required("Email is required").email("Email is invalid"),
-		password: string()
+	body: yup.object({
+		email: yup.string().required("Email is required").email("Email is invalid"),
+		password: yup
+			.string()
 			.required("Password is required")
 			.min(8, "Password must be at least 6 characters")
 			.max(24, "Password must not exceed 24 characters")
