@@ -26,8 +26,8 @@ exports.login = async (req, res) => {
 
 	try {
 		const foundUser = await knex("users")
-			// .join("userskills", "users.user_id", "=", "userskills.user_id")
-			.select(
+			.join("userskills", "users.user_id", "=", "userskills.user_id")
+			.select([
 				"users.user_id",
 				"users.about",
 				"users.email",
@@ -41,8 +41,11 @@ exports.login = async (req, res) => {
 				"users.city",
 				"users.province",
 				"users.address",
-				"users.created_at"
-			)
+				"users.created_at",
+				knex.raw(
+					"JSON_OBJECTAGG(userskills.skill, userskills.offer) as barters"
+				),
+			])
 			// .select(
 			// 	knex.raw(
 			// 		"JSON_OBJECTAGG(userskills.skill, userskills.offer) as barters"
@@ -56,16 +59,22 @@ exports.login = async (req, res) => {
 			console.log("No user found during login");
 			return res.status(404).send(`Credentials Wrong`);
 		}
-		console.log("req.body.password: ", req.body.password);
-		const pwCheck = await comparePasswords(
-			req.body.password,
-			foundUser.password
-		);
 
-		if (!pwCheck) {
-			console.log("Password failed check at login");
-			return res.status(404).send(`Credentials Wrong`);
+		const passwordValid = comparePasswords(password, foundUser);
+		if (!passwordValid) {
+			return res.status(401).json({ message: "Invalid password" });
 		}
+
+		// console.log("req.body.password: ", req.body.password);
+		// const pwCheck = await comparePasswords(
+		// 	req.body.password,
+		// 	foundUser.password
+		// );
+
+		// if (!pwCheck) {
+		// 	console.log("Password failed check at login");
+		// 	return res.status(404).send(`Credentials Wrong`);
+		// }
 
 		const token = createJWT(foundUser.user.email);
 		return res.status(200).json({ token, user: foundUser.user });
