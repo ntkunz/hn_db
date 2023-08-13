@@ -26,7 +26,7 @@ exports.login = async (req, res) => {
 
 	try {
 		const foundUser = await knex("users")
-			.join("userskills", "users.user_id", "=", "userskills.user_id")
+			// .join("userskills", "users.user_id", "=", "userskills.user_id")
 			.select(
 				"users.user_id",
 				"users.about",
@@ -43,11 +43,11 @@ exports.login = async (req, res) => {
 				"users.address",
 				"users.created_at"
 			)
-			.select(
-				knex.raw(
-					"JSON_OBJECTAGG(userskills.skill, userskills.offer) as barters"
-				)
-			)
+			// .select(
+			// 	knex.raw(
+			// 		"JSON_OBJECTAGG(userskills.skill, userskills.offer) as barters"
+			// 	)
+			// )
 			.where({ email: userEmail });
 
 		// const foundUser = await getUser(email, joinClause);
