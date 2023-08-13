@@ -26,10 +26,6 @@ exports.login = async (req, res) => {
 
 	try {
 		const foundUser = await knex("users")
-			// .join("userskills", "users.user_id", "=", "userskills.user_id")
-			.join("userskills", function () {
-				this.on("users.user_id", "=", "userskills.user_id");
-			})
 			.select(
 				"users.user_id",
 				"users.about",
@@ -44,16 +40,8 @@ exports.login = async (req, res) => {
 				"users.city",
 				"users.province",
 				"users.address",
-				"users.created_at",
-				// "userskills.skill",
-				// "userskills.offer"
-				knex.raw(
-					"JSON_OBJECTAGG(userskills.skill, userskills.offer) as barters"
-				)
+				"users.created_at"
 			)
-			.groupBy("users.user_id")
-
-			// .where({ email: userEmail });
 			.where("users.email", userEmail);
 
 		// const foundUser = await getUser(email, joinClause);
@@ -79,8 +67,10 @@ exports.login = async (req, res) => {
 		// 	return res.status(404).send(`Credentials Wrong`);
 		// }
 
-		const token = createJWT(foundUser.user.email);
-		return res.status(200).json({ token, user: foundUser.user });
+		return res.status(200).json({ user: foundUser });
+
+		// const token = createJWT(foundUser.user.email);
+		// return res.status(200).json({ token, user: foundUser.user });
 	} catch (err) {
 		console.log(err);
 		return res.status(400).send(`Error logging in`);
