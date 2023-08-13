@@ -9,8 +9,7 @@ const validate = (schema) => async (req, res, next) => {
 		});
 		return next();
 	} catch (error) {
-		res.status(401).json({ type: error.name, message: error.message });
-		// return;
+		return res.status(401).json({ type: error.name, message: error.message });
 	}
 };
 
