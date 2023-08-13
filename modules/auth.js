@@ -10,7 +10,7 @@ const createLoginJWT = (userId) => {
 		{ userId: userId },
 		process.env.JWT_SECRET,
 		{
-			expiresIn: process.env.JWT_EXPIRES_IN,
+			expiresIn: "90d",
 		}
 	);
 	return loginTokenCreated;
