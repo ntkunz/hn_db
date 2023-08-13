@@ -87,7 +87,7 @@ exports.login = async (req, res) => {
 
 		// return res.status(200).json({ user: foundUser });
 
-		const token = createJWT(foundUser.user.email);
+		const token = createJWT(foundUser.email);
 		return res.status(200).json({ token, user: foundUser });
 	} catch (err) {
 		console.log(err);
