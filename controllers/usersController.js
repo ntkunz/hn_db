@@ -64,7 +64,7 @@ exports.login = async (req, res) => {
 			.select("skill", "offer")
 			.where("user_id", foundUser.user_id);
 
-		foundUser.barters = userskills;
+		foundUser.barters = loggedInUserSkills;
 		console.log("foundUser with skills: ", foundUser);
 
 		delete foundUser.password;
