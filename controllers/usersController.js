@@ -26,7 +26,10 @@ exports.login = async (req, res) => {
 
 	try {
 		const foundUser = await knex("users")
-			.join("userskills", "users.user_id", "=", "userskills.user_id")
+			// .join("userskills", "users.user_id", "=", "userskills.user_id")
+			.join("userskills", function () {
+				this.on("users.user_id", "=", "userskills.user_id");
+			})
 			.select(
 				"users.user_id",
 				"users.about",
