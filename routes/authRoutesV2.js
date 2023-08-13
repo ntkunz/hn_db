@@ -8,3 +8,5 @@ router
 	.route("/")
 	// .get(usersControllerV2.loginUser)
 	.post(usersControllerV2.verifyLogin);
+
+module.exports = router;
