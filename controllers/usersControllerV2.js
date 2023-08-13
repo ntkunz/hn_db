@@ -10,16 +10,19 @@ exports.verifyLogin = async (req, res) => {
 			.select("users.user_id")
 			.where("users.email", email);
 
-		if (!userExists) res.status(404).json({ message: "User not found" });
+		console.log("userExists: ", userExists);
+
+		if (!userExists) return res.status(404).json({ message: "User not found" });
 
 		const passwordValid = comparePasswords(password, userExists);
-		if (!passwordValid) res.status(401).json({ message: "Invalid password" });
+		if (!passwordValid)
+			return res.status(401).json({ message: "Invalid password" });
 
 		const loginToken = createLoginJWT(userExists.userId);
-		res.status(202).json({ loginToken: loginToken });
+		return res.status(202).json({ loginToken: loginToken });
 	} catch (error) {
 		console.log("verifyLoginError: ", error);
-		res.status(404).json({ message: "User not found" });
+		return res.status(404).json({ message: "User not found" });
 	}
 	//validate email and password formats, handle errors => maybe done in middleware by yup?
 
