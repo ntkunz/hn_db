@@ -23,7 +23,6 @@ let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
 exports.login = async (req, res) => {
 	console.log("req.body: ", req.body);
 	const userEmail = req.body.email;
-	console.log("req.body.email: ", email);
 
 	try {
 		const foundUser = await knex("users")
