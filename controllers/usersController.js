@@ -52,7 +52,10 @@ exports.login = async (req, res) => {
 			return res.status(404).send(`Credentials Wrong`);
 		}
 
-		const passwordValid = comparePasswords(req.body.password, foundUser);
+		const passwordValid = comparePasswords(
+			req.body.password,
+			foundUser.password
+		);
 		if (!passwordValid) {
 			return res.status(401).json({ message: "Invalid password" });
 		}
