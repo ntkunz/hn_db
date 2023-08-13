@@ -45,18 +45,12 @@ exports.login = async (req, res) => {
 				"users.province",
 				"users.address",
 				"users.created_at",
-				"userskills.skill",
-				"userskills.offer"
-				// knex.raw(
-				// 	"JSON_OBJECTAGG(userskills.skill, userskills.offer) as barters"
-				// ),
+				// "userskills.skill",
+				// "userskills.offer"
+				knex.raw("GROUP_CONCAT(userskills.skill, userskills.offer) as barters")
 			)
 			.groupBy("users.user_id")
-			// .select(
-			// 	knex.raw(
-			// 		"JSON_OBJECTAGG(userskills.skill, userskills.offer) as barters"
-			// 	)
-			// )
+
 			.where({ email: userEmail });
 
 		// const foundUser = await getUser(email, joinClause);
