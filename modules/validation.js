@@ -13,7 +13,7 @@ const validate = (schema) => async (req, res, next) => {
 	}
 };
 
-const loginSchema = object({
+const loginSchema = yup.object({
 	body: yup.object({
 		email: yup.string().required("Email is required").email("Email is invalid"),
 		password: yup
