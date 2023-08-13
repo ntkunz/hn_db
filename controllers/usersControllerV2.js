@@ -1,5 +1,5 @@
 const knex = require("knex")(require("../knexfile"));
-import { createLoginJWT } from "../modules/auth.js";
+const { createLoginJWT } = require("../modules/auth.js");
 
 exports.verifyLogin = async (req, res) => {
 	const email = req.body.email;
