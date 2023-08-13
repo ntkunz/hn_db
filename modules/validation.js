@@ -28,7 +28,7 @@ const loginSchema = object({
 	}),
 });
 
-export default {
+module.exports = {
 	validate,
 	loginSchema,
 };
