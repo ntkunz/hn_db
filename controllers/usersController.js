@@ -127,7 +127,7 @@ exports.verifyUser = async (req, res) => {
 					"users.address",
 					"users.created_at"
 				)
-				.where("users.email", userEmail)
+				.where("users.email", email)
 				.first();
 
 			const loggedInUserSkills = await knex("userskills")
