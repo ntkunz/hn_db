@@ -54,11 +54,10 @@ const protect = (req, res, next) => {
 	const [, token] = bearer.split(" ");
 	const tokenObject = JSON.parse(token);
 	const userToken = tokenObject.userToken;
-	console.log("userToken: ", userToken);
 
 	if (!userToken) {
-		res.status(401);
-		res.json({ message: "invalid token" });
+		console.log("Cannot validate without user token");
+		res.status(401).json({ message: "invalid token" });
 		return;
 	}
 
@@ -66,15 +65,15 @@ const protect = (req, res, next) => {
 		//Confirm token is not expired
 		const user = jwt.verify(userToken, process.env.JWT_SECRET);
 		if (user.exp < Date.now() / 1000) {
+			console.log("token expired");
 			res.status(401).json({ message: "token expired" });
 			return;
 		}
 		req.user = user;
-		next();
-	} catch (e) {
-		console.error(e);
-		res.status(401);
-		res.json({ message: "bad token" });
+		return next();
+	} catch (error) {
+		console.error(error);
+		res.status(401).json({ message: "bad token" });
 		return;
 	}
 };
