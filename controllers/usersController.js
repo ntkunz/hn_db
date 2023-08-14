@@ -153,7 +153,10 @@ exports.getNeighbors = async (req, res) => {
 
 		// If found user, find all neighbors within 1/2 km as neighbors
 		const neighbors = await knex("users")
-			.join(joinClause.table, joinClause.joinCondition)
+			// .join(joinClause.table, joinClause.joinCondition)
+			.join("userskills", function () {
+				this.on("users.user_id", "=", "userskills.user_id");
+			})
 			.whereNot("users.user_id", loggedInUser.user_id)
 			// Select only necessary columns from users table
 			.select(
@@ -182,8 +185,8 @@ exports.getNeighbors = async (req, res) => {
 
 		return res.status(200).json({ neighbors: neighbors });
 	} catch (err) {
-		console.log("error getting neighbors");
-		return res.status(404).send(`Error getting user ${err}`);
+		console.log("error getting neighbors", err);
+		return res.status(404).send(`Error getting neighbors`);
 	}
 };
 
