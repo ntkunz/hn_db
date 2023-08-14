@@ -138,12 +138,12 @@ exports.verifyUser = async (req, res) => {
 
 			delete foundUser.password;
 
-			if (foundUser.length === 0) {
-				console.log("no found user length");
-				return res.status(400).send("token error");
-			} else {
-				return res.status(200).json(foundUser);
-			}
+			// if (foundUser.length === 0) {
+			// 	console.log("no found user length");
+			// 	return res.status(400).send("token error");
+			// } else {
+			return res.status(200).json(foundUser);
+			// }
 		} catch (err) {
 			console.log("error validating user", err);
 			return res.status(400).send("token error");
@@ -283,7 +283,7 @@ exports.newUser = async (req, res) => {
 		// Create and assign a new token
 		const token = createJWT(req.body.email);
 		// return user and auth token with user_id to client
-		return res.status(200).json({ token: token, userId: req.body.user_id });
+		return res.status(200).json({ token: token, userId: req.body.userId });
 	} catch (err) {
 		console.log("error adding new user", err);
 		return res.status(400).send(`Error adding new user ${err}`);
