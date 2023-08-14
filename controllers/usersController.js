@@ -21,7 +21,6 @@ let emailRregex =
 let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
 
 exports.login = async (req, res) => {
-	console.log("req.body: ", req.body);
 	const userEmail = req.body.email;
 
 	try {
@@ -57,7 +56,8 @@ exports.login = async (req, res) => {
 			foundUser.password
 		);
 		if (!passwordValid) {
-			return res.status(401).json({ message: "Invalid password" });
+			console.log("Invalid Password");
+			return res.status(401).send("Invalid password");
 		}
 
 		const loggedInUserSkills = await knex("userskills")
@@ -71,7 +71,7 @@ exports.login = async (req, res) => {
 		const token = createJWT(foundUser.email);
 		return res.status(200).json({ token, user: foundUser });
 	} catch (err) {
-		console.log(err);
+		console.log("Error logging in user", err);
 		return res.status(400).send(`Error logging in`);
 	}
 };
@@ -90,30 +90,35 @@ exports.verifyUser = async (req, res) => {
 		const info = getInfoFromToken(splitToken);
 
 		if (info.error) {
-			return res.status(401).json({ error: "token error" });
+			console.log("Error getting info from token", info.error);
+			return res.status(401).send("token error");
 		}
 
 		// Check token is not expired
 		const currentTimestamp = Math.floor(Date.now() / 1000); // Get the current timestamp in seconds
 		if (info.exp && info.exp < currentTimestamp) {
-			return res.status(401).json({ error: "token error" });
+			console.log("token expired");
+			return res.status(401).send("token error");
 		}
 
 		const email = info.email;
 
 		if (!email) {
-			return res.status(401).json({ error: "token error" });
+			console.log("no email in token");
+			return res.status(401).send("token error");
 		}
 
 		try {
 			const foundUser = await getUser(whereClause(email), joinClause);
 			if (foundUser.length === 0) {
+				console.log("no found user length");
 				return res.status(400).send("token error");
 			} else {
 				return res.status(200).json(foundUser.user);
 			}
 		} catch (err) {
-			return res.status(400).json({ error: "token error" });
+			console.log("error validating user", err);
+			return res.status(400).send("token error");
 		}
 	}
 };
@@ -132,7 +137,8 @@ exports.getNeighbors = async (req, res) => {
 	const info = getInfoFromToken(splitToken);
 
 	if (info.error) {
-		return res.status(401).json({ error: info.error });
+		console.log("error getting neighbors from token", info.error);
+		return res.status(401).send("error getting user information from token");
 	}
 
 	try {
@@ -219,6 +225,7 @@ exports.newEmail = async (req, res) => {
  */
 exports.newUser = async (req, res) => {
 	if (req.body.password.length < 8 || !passwordRegex.test(req.body.password)) {
+		console.log("New user password invalid");
 		return res.status(404)
 			.send(`Password must be at least 8 characters and contain 
 				at least one uppercase letter, one lowercase letter, one 
@@ -250,7 +257,6 @@ exports.newUser = async (req, res) => {
 		// return user and auth token with user_id to client
 		return res.status(200).json({ token: token, userId: req.body.user_id });
 	} catch (err) {
-		console.error(err);
 		console.log("error adding new user", err);
 		return res.status(400).send(`Error adding new user ${err}`);
 	}

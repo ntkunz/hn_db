@@ -72,7 +72,7 @@ const protect = (req, res, next) => {
 		req.user = user;
 		return next();
 	} catch (error) {
-		console.error(error);
+		console.log(error);
 		res.status(401).json({ message: "bad token" });
 		return;
 	}
@@ -98,7 +98,6 @@ const getInfoFromToken = (token) => {
 
 		try {
 			const decoded = jwt.verify(tokenValue, process.env.JWT_SECRET);
-			console.log("decoded token: ", decoded);
 			return decoded;
 		} catch (error) {
 			// Check for the specific error indicating an invalid signature

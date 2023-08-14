@@ -36,6 +36,7 @@ exports.removeSkills = async (req, res) => {
 		await knex("userskills").where("user_id", req.params.id).del();
 		return res.status(200).send("User skills removed");
 	} catch (err) {
+		console.log("Error deleting userskills", err);
 		return res.status(400).send(`Error removing user skills ${err}`);
 	}
 };

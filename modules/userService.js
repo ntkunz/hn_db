@@ -7,7 +7,8 @@ async function updateUser(whereClause, userData) {
 	try {
 		await knex("users").where(whereClause).first().update(userData);
 	} catch (err) {
-		throw new Error(`Error updating user: ${err}`);
+		// throw new Error(`Error updating user: ${err}`);
+		console.log("error updating user", err);
 	}
 }
 
