@@ -46,7 +46,7 @@ exports.login = async (req, res) => {
 			.first();
 
 		// const foundUser = await getUser(email, joinClause);
-		console.log("foundUser: ", foundUser);
+
 		if (!foundUser || foundUser.length === 0) {
 			console.log("No user found during login");
 			return res.status(404).send(`Credentials Wrong`);
@@ -65,27 +65,8 @@ exports.login = async (req, res) => {
 			.where("user_id", foundUser.user_id);
 
 		foundUser.barters = loggedInUserSkills;
-		console.log("foundUser with skills: ", foundUser);
 
 		delete foundUser.password;
-
-		console.log("foundUser without password: ", foundUser);
-
-		// const { password, ...userWithoutPassword } = foundUser;
-		// return { user: userWithoutPassword, password: password };
-
-		// console.log("req.body.password: ", req.body.password);
-		// const pwCheck = await comparePasswords(
-		// 	req.body.password,
-		// 	foundUser.password
-		// );
-
-		// if (!pwCheck) {
-		// 	console.log("Password failed check at login");
-		// 	return res.status(404).send(`Credentials Wrong`);
-		// }
-
-		// return res.status(200).json({ user: foundUser });
 
 		const token = createJWT(foundUser.email);
 		return res.status(200).json({ token, user: foundUser });
@@ -145,10 +126,13 @@ exports.verifyUser = async (req, res) => {
  */
 exports.getNeighbors = async (req, res) => {
 	const token = req.headers.authorization;
+	console.log("token: token");
 	// Split token to remove bearer
 	const splitToken = token.split(" ")[1];
+	console.log("splitToken: splitToken");
 	// Decode token to get email
 	const info = getInfoFromToken(splitToken);
+	console.log("info from token: ", info);
 
 	if (info.error) {
 		return res.status(401).json({ error: info.error });
@@ -156,7 +140,12 @@ exports.getNeighbors = async (req, res) => {
 
 	try {
 		// Get user and userskills from database from token email
-		const foundUser = await getUser(whereClause(info.email), joinClause);
+		// const foundUser = await getUser(whereClause(info.email), joinClause);
+		// ======= LATER, JUST SEND LOCATION AND USER ID IN THE REQUEST =====
+		const loggedInUser = await knex("users")
+			.select("users.user_id", "users.location")
+			.where("users.email", info.email)
+			.first();
 
 		if (foundUser.length === 0) {
 			return res.status(404).send(`No user found with email ${email}`);
@@ -165,7 +154,7 @@ exports.getNeighbors = async (req, res) => {
 		// If found user, find all neighbors within 1/2 km as neighbors
 		const neighbors = await knex("users")
 			.join(joinClause.table, joinClause.joinCondition)
-			.whereNot("users.user_id", foundUser.user.user_id)
+			.whereNot("users.user_id", loggedInUser.user_id)
 			// Select only necessary columns from users table
 			.select(
 				"users.user_id",

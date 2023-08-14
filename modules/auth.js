@@ -42,6 +42,7 @@ const protect = (req, res, next) => {
 			req.originUrl === "/users/verify" ||
 			(req.method === "POST" && req.originalUrl.startsWith("/users"))
 		) {
+			console.log("unprotected route");
 			next();
 			return;
 		}
@@ -53,6 +54,7 @@ const protect = (req, res, next) => {
 	const [, token] = bearer.split(" ");
 	const tokenObject = JSON.parse(token);
 	const userToken = tokenObject.userToken;
+	console.log("userToken: ", userToken);
 
 	if (!userToken) {
 		res.status(401);
@@ -64,8 +66,7 @@ const protect = (req, res, next) => {
 		//Confirm token is not expired
 		const user = jwt.verify(userToken, process.env.JWT_SECRET);
 		if (user.exp < Date.now() / 1000) {
-			res.status(401);
-			res.json({ message: "token expired" });
+			res.status(401).json({ message: "token expired" });
 			return;
 		}
 		req.user = user;
@@ -98,6 +99,7 @@ const getInfoFromToken = (token) => {
 
 		try {
 			const decoded = jwt.verify(tokenValue, process.env.JWT_SECRET);
+			console.log("decoded token: ", decoded);
 			return decoded;
 		} catch (error) {
 			// Check for the specific error indicating an invalid signature
