@@ -270,8 +270,34 @@ exports.editUser = async (req, res) => {
 
 	try {
 		await updateUser(whereClause(userEmail), updateData);
-		const editedUser = await getUser(whereClause(userEmail), joinClause);
-		return res.json(editedUser.user);
+		const editedUser = await knex("users")
+			.select(
+				"users.user_id",
+				"users.about",
+				"users.email",
+				"users.first_name",
+				"users.last_name",
+				"users.location",
+				"users.image_url",
+				"users.status",
+				"users.password",
+				"users.home",
+				"users.city",
+				"users.province",
+				"users.address",
+				"users.created_at"
+			)
+			.where("users.email", userEmail)
+			.first();
+
+		const editedUserSkills = await knex("userskills")
+			.select("skill", "offer")
+			.where("user_id", editedUser.user_id);
+
+		editedUser.barters = editedUserSkills;
+
+		delete editedUser.password;
+		return res.status(200).json(editedUser);
 	} catch (err) {
 		console.log("error editing user", err);
 		return res.status(400).send(`Error editing user` + err);
