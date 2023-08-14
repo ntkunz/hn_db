@@ -126,13 +126,10 @@ exports.verifyUser = async (req, res) => {
  */
 exports.getNeighbors = async (req, res) => {
 	const token = req.headers.authorization;
-	console.log("token: token");
-	// Split token to remove bearer
+
 	const splitToken = token.split(" ")[1];
-	console.log("splitToken: splitToken");
-	// Decode token to get email
+
 	const info = getInfoFromToken(splitToken);
-	console.log("info from token: ", info);
 
 	if (info.error) {
 		return res.status(401).json({ error: info.error });
@@ -147,9 +144,9 @@ exports.getNeighbors = async (req, res) => {
 			.where("users.email", info.email)
 			.first();
 
-		if (foundUser.length === 0) {
-			return res.status(404).send(`No user found with email ${email}`);
-		}
+		// if (loggedInUser.length === 0) {
+		// 	return res.status(404).send(`No user found with email ${email}`);
+		// }
 
 		// If found user, find all neighbors within 1/2 km as neighbors
 		const neighbors = await knex("users")
