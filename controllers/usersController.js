@@ -109,12 +109,40 @@ exports.verifyUser = async (req, res) => {
 		}
 
 		try {
-			const foundUser = await getUser(whereClause(email), joinClause);
+			// const foundUser = await getUser(whereClause(email), joinClause);
+			const foundUser = await knex("users")
+				.select(
+					"users.user_id",
+					"users.about",
+					"users.email",
+					"users.first_name",
+					"users.last_name",
+					"users.location",
+					"users.image_url",
+					"users.status",
+					"users.password",
+					"users.home",
+					"users.city",
+					"users.province",
+					"users.address",
+					"users.created_at"
+				)
+				.where("users.email", userEmail)
+				.first();
+
+			const loggedInUserSkills = await knex("userskills")
+				.select("skill", "offer")
+				.where("user_id", foundUser.user_id);
+
+			foundUser.barters = loggedInUserSkills;
+
+			delete foundUser.password;
+
 			if (foundUser.length === 0) {
 				console.log("no found user length");
 				return res.status(400).send("token error");
 			} else {
-				return res.status(200).json(foundUser.user);
+				return res.status(200).json(foundUser);
 			}
 		} catch (err) {
 			console.log("error validating user", err);
