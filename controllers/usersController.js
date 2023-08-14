@@ -173,9 +173,9 @@ exports.getNeighbors = async (req, res) => {
 			//where the location is within 1/2 km of the found user
 			.whereRaw(
 				"st_distance_sphere(st_geomfromtext(st_aswkt(location), 0), st_geomfromtext('POINT(" +
-					loggedInUser.user.location.x +
+					loggedInUser.location.x +
 					" " +
-					loggedInUser.user.location.y +
+					loggedInUser.location.y +
 					")', 0)) < 500"
 			)
 			.groupBy("users.user_id");
