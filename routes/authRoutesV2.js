@@ -1,3 +1,6 @@
+// WORK IN PROGRESS
+// TODO : Declare new routes for v2 server refactor
+
 const router = require("express").Router();
 const usersControllerV2 = require("../controllers/usersControllerV2.js");
 

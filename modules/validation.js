@@ -1,4 +1,6 @@
-const yup = require("yup");
+// WORK IN PROGRESS
+// TODO : Modify all validation to yup
+// const yup = require("yup");
 
 const validate = (schema) => async (req, res, next) => {
 	try {

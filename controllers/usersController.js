@@ -7,22 +7,31 @@ const {
 	getInfoFromToken,
 } = require("../modules/auth");
 
+// TODO : Remake getUser and joinClause modules as one module
+// old getUser and joinClause modules currently disabled
+
 const {
 	updateUser,
-	getUser,
+	// getUser,
 	whereClause,
-	joinClause,
+	// joinClause,
 	userData,
 	getUserPassword,
 } = require("../modules/userService");
 
-let emailRregex =
+// TODO : Use JS to validate password and email rather than regex, or yup validation like server V2
+
+let emailRegex =
 	/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
 
 exports.login = async (req, res) => {
 	const userEmail = req.body.email;
 
+	// TODO : Validate email
+	// TODO : Validate password
+
+	// TODO : Replace foundUser below with getUser once updated
 	try {
 		const foundUser = await knex("users")
 			.select(
@@ -44,11 +53,9 @@ exports.login = async (req, res) => {
 			.where("users.email", userEmail)
 			.first();
 
-		// const foundUser = await getUser(email, joinClause);
-
 		if (!foundUser || foundUser.length === 0) {
 			console.log("No user found during login");
-			return res.status(404).send(`Credentials Wrong`);
+			return res.status(401).send(`Credentials Wrong`);
 		}
 
 		const passwordValid = comparePasswords(
@@ -64,52 +71,45 @@ exports.login = async (req, res) => {
 			.select("skill", "offer")
 			.where("user_id", foundUser.user_id);
 
+		// add user skills to user and remove password before returning
 		foundUser.barters = loggedInUserSkills;
-
 		delete foundUser.password;
 
 		const token = createJWT(foundUser.email);
 		return res.status(200).json({ token, user: foundUser });
-	} catch (err) {
-		console.log("Error logging in user", err);
-		return res.status(400).send(`Error logging in`);
+	} catch (error) {
+		console.log("Error logging in user", error);
+		return res.status(404).send(`Error logging in`);
 	}
 };
 
-/**
- * Verify user from browser token
- * @param {Object} req - Request object
- * @param {Object} res - Response object
- */
 exports.verifyUser = async (req, res) => {
 	const token = req.headers.authorization;
 
 	if (token) {
-		// Split token to remove "bearer" and get info from token values
 		const splitToken = token.split(" ")[1];
 		const info = getInfoFromToken(splitToken);
 
 		if (info.error) {
 			console.log("Error getting info from token", info.error);
-			return res.status(401).send("token error");
+			return res.status(401).send("Token error");
 		}
 
 		// Check token is not expired
 		const currentTimestamp = Math.floor(Date.now() / 1000); // Get the current timestamp in seconds
 		if (info.exp && info.exp < currentTimestamp) {
 			console.log("token expired");
-			return res.status(401).send("token error");
+			return res.status(401).send("Token expired");
 		}
 
 		const email = info.email;
 
 		if (!email) {
-			console.log("no email in token");
-			return res.status(401).send("token error");
+			return res.status(401).send("Improper token");
 		}
 
 		try {
-			// const foundUser = await getUser(whereClause(email), joinClause);
+			// TODO : Replace foundUser below with getUser once updated
 			const foundUser = await knex("users")
 				.select(
 					"users.user_id",
@@ -135,61 +135,46 @@ exports.verifyUser = async (req, res) => {
 				.where("user_id", foundUser.user_id);
 
 			foundUser.barters = loggedInUserSkills;
-
 			delete foundUser.password;
 
-			// if (foundUser.length === 0) {
-			// 	console.log("no found user length");
-			// 	return res.status(400).send("token error");
-			// } else {
 			return res.status(200).json(foundUser);
-			// }
-		} catch (err) {
-			console.log("error validating user", err);
-			return res.status(400).send("token error");
+		} catch (error) {
+			console.log("error validating user", error);
+			return res
+				.status(401)
+				.send("Error logging in from token, please relogin");
 		}
 	}
 };
 
-/**
- * Get all neighbors within 1/2 km and their associated skills and offers
- * @param {Object} req - The HTTP request object
- * @param {Object} res - The HTTP response object
- * @return {Object} JSON object containing neighbors and their associated skills and offers
- */
 exports.getNeighbors = async (req, res) => {
 	const token = req.headers.authorization;
-
 	const splitToken = token.split(" ")[1];
-
 	const info = getInfoFromToken(splitToken);
 
 	if (info.error) {
 		console.log("error getting neighbors from token", info.error);
-		return res.status(401).send("error getting user information from token");
+		return res.status(401).send("Token error");
 	}
 
 	try {
-		// Get user and userskills from database from token email
-		// const foundUser = await getUser(whereClause(info.email), joinClause);
-		// ======= LATER, JUST SEND LOCATION AND USER ID IN THE REQUEST =====
+		// TODO: JUST SEND LOCATION AND USER ID IN THE REQUEST rather than needing to make another call below =====
 		const loggedInUser = await knex("users")
 			.select("users.user_id", "users.location")
 			.where("users.email", info.email)
 			.first();
 
+		// TODO : Handle specific error if unable to get user location and id off of email above
 		// if (loggedInUser.length === 0) {
 		// 	return res.status(404).send(`No user found with email ${email}`);
 		// }
 
 		// If found user, find all neighbors within 1/2 km as neighbors
 		const neighbors = await knex("users")
-			// .join(joinClause.table, joinClause.joinCondition)
 			.join("userskills", function () {
 				this.on("users.user_id", "=", "userskills.user_id");
 			})
 			.whereNot("users.user_id", loggedInUser.user_id)
-			// Select only necessary columns from users table
 			.select(
 				"users.user_id",
 				"users.about",
@@ -198,13 +183,11 @@ exports.getNeighbors = async (req, res) => {
 				"users.status",
 				"users.created_at"
 			)
-			//select all skills and offers from userskills table
 			.select(
 				knex.raw(
 					"JSON_OBJECTAGG(userskills.skill, userskills.offer) as barters"
 				)
 			)
-			//where the location is within 1/2 km of the found user
 			.whereRaw(
 				"st_distance_sphere(st_geomfromtext(st_aswkt(location), 0), st_geomfromtext('POINT(" +
 					loggedInUser.location.x +
@@ -215,8 +198,8 @@ exports.getNeighbors = async (req, res) => {
 			.groupBy("users.user_id");
 
 		return res.status(200).json({ neighbors: neighbors });
-	} catch (err) {
-		console.log("error getting neighbors", err);
+	} catch (error) {
+		console.log("error getting neighbors", error);
 		return res.status(404).send(`Error getting neighbors`);
 	}
 };
@@ -226,35 +209,30 @@ exports.getNeighbors = async (req, res) => {
  * If the email is not in use, returns a 200 status and a message indicating that no user was found.
  * If the email is already in use, returns a 202 status and a message indicating that a user was found.
  * If an error occurs during the search, returns a 400 status and an error message.
- * @param {Object} req - The request object containing the email to be checked in the body.
- * @param {Object} res - The response object to be returned.
- * @returns {Object} - The response object with the appropriate status and message.
  */
 exports.newEmail = async (req, res) => {
 	try {
 		const foundUser = await knex("users").where(whereClause(req.body.email));
+
+		// TODO : Update status codes below, and modify frontend accordingly
 
 		if (!foundUser || foundUser.length === 0) {
 			return res.status(200).send(`No user found with email ${req.body.email}`);
 		} else {
 			return res.status(202).send(`User found with email ${req.body.email}`);
 		}
-	} catch (err) {
-		console.log("error checking for new email", err);
-		return res.status(400).send(`Error confirming user ${err}`);
+	} catch (error) {
+		console.log("error checking for new email", error);
+		return res.status(400).send(`Error confirming user email`);
 	}
 };
 
-/**
- * Creates a new user after validating input and adds them to the database
- * @param {Object} req - The HTTP request object containing user data	// Check if email exists in database
- * @param {Object} res - The HTTP response object
- * @returns {Object} The HTTP response object containing a JSON Web Token and the user's ID
- */
 exports.newUser = async (req, res) => {
+	// TODO : Validate email
+	// TODO : Update password validation to use JS (library or not)
 	if (req.body.password.length < 8 || !passwordRegex.test(req.body.password)) {
 		console.log("New user password invalid");
-		return res.status(404)
+		return res.status(400)
 			.send(`Password must be at least 8 characters and contain 
 				at least one uppercase letter, one lowercase letter, one 
 				number and one special character`);
@@ -280,30 +258,24 @@ exports.newUser = async (req, res) => {
 
 	try {
 		await knex("users").insert(newUserData);
-		// Create and assign a new token
 		const token = createJWT(req.body.email);
-		// return user and auth token with user_id to client
 		return res.status(200).json({ token: token, userId: req.body.userId });
-	} catch (err) {
-		console.log("error adding new user", err);
-		return res.status(400).send(`Error adding new user ${err}`);
+	} catch (error) {
+		console.log("error adding new user", error);
+		return res.status(400).send(`Error adding new user`);
 	}
 };
 
-/**
- * Edit a user's information
- * @param {Object} req - The request object.
- * @param {Object} res - The response object.
- * @returns {Object} Returns the edited user object.
- */
 exports.editUser = async (req, res) => {
 	const userEmail = req.body.email;
 
-	//format req to be sent to database
+	// Format req to be sent to database with userData module
 	const updateData = userData(req);
 
 	try {
 		await updateUser(whereClause(userEmail), updateData);
+
+		// TODO : Replace editedUser below with getUser once updated
 		const editedUser = await knex("users")
 			.select(
 				"users.user_id",
@@ -329,25 +301,19 @@ exports.editUser = async (req, res) => {
 			.where("user_id", editedUser.user_id);
 
 		editedUser.barters = editedUserSkills;
-
 		delete editedUser.password;
+
 		return res.status(200).json(editedUser);
-	} catch (err) {
-		console.log("error editing user", err);
-		return res.status(400).send(`Error editing user` + err);
+	} catch (error) {
+		console.log("error editing user", error);
+		return res.status(400).send(`Error editing user`);
 	}
 };
 
-/**
- * Add an image to a user's profile
- * @param {Object} req - The HTTP request object
- * @param {Object} res - The HTTP response object
- * @returns {Object} The HTTP response object
- */
 exports.addImage = async (req, res) => {
 	// If no file was uploaded, do nothing.
 	if (!req.file) {
-		return;
+		return res.status(204);
 	}
 
 	const { user_id } = req.body;
@@ -359,9 +325,9 @@ exports.addImage = async (req, res) => {
 			return res.status(404).json({ error: "User not found" });
 		}
 		return res.status(200).json({ message: "Image uploaded successfully" });
-	} catch (err) {
-		console.error("error adding image: ", err);
-		return res.status(500).json({ error: err.message });
+	} catch (error) {
+		console.error("Error adding image: ", error);
+		return res.status(400).json({ error: "Error adding image" });
 	}
 };
 
@@ -375,7 +341,7 @@ exports.deleteUser = async (req, res) => {
 	const pwCheck = await comparePasswords(userPassword, userDbPassword.password);
 
 	if (!pwCheck) {
-		return res.status(400).send(`Credentials Wrong`);
+		return res.status(401).send(`Credentials Wrong`);
 	}
 
 	if (userId !== userDbPassword.user_id) {
@@ -385,8 +351,8 @@ exports.deleteUser = async (req, res) => {
 	try {
 		await knex("users").where(whereClause(userEmail)).del();
 		return res.status(200).json({ message: "User deleted successfully" });
-	} catch (err) {
-		console.log("error deleting user", err);
+	} catch (error) {
+		console.log("error deleting user", error);
 		return res.status(401).json({ error: "Unable to delete user" });
 	}
 };
@@ -394,9 +360,8 @@ exports.deleteUser = async (req, res) => {
 exports.wakeup = async (_req, res) => {
 	try {
 		return res.status(200).json({ message: "Waking up" });
-	} catch (err) {
-		console.error(err);
-		console.log("error waking up", err);
-		return res.send("error waking up the server");
+	} catch (error) {
+		console.log("error waking up", error);
+		return res.status(404).send("Error waking up the server");
 	}
 };

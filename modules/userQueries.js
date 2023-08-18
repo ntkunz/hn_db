@@ -2,10 +2,14 @@ const knexConfig = require("../knexfile");
 const knex = require("knex")(knexConfig);
 
 // ===========V2 QUERIES===========
+// TODO : Create more clear and specific queries for V2 server
+// WORK IN PROGRESS
 
 // =============V1 QUERIES============
+// function to set where clause of getUser query for V1 == somewhat frivolous
 const whereClause = (userEmail) => ({ "users.email": userEmail });
 
+// object to set join clause for getting userskills along with users
 const joinClause = {
 	table: "userskills",
 	joinCondition: function () {
@@ -13,6 +17,7 @@ const joinClause = {
 	},
 };
 
+// function to set userData for updating user
 const userData = (req) => {
 	return {
 		user_id: req.body.userId,

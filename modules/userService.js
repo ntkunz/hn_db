@@ -7,12 +7,12 @@ async function updateUser(whereClause, userData) {
 	try {
 		await knex("users").where(whereClause).first().update(userData);
 	} catch (err) {
-		// throw new Error(`Error updating user: ${err}`);
 		console.log("error updating user", err);
 	}
 }
 
-// Helper function to retrieve new or edited logged in user information
+// Retrieve new or edited logged in user information
+// TODO: Fix userskills join to not need to make second call
 async function getUser(email, joinClause) {
 	try {
 		const user = await knex("users")
@@ -43,7 +43,7 @@ async function getUser(email, joinClause) {
 			.where("users.email", email);
 		console.log("user: ", user);
 		// Retrieve userskills as 'barters' select above is no longer functioning as expected
-		//TODO: Fix userskills join above to not make another call below
+		// TODO : Fix userskills join above to not need to make another call below
 		if (user[0]) {
 			const userskills = await knex("userskills")
 				.select("skill", "offer")

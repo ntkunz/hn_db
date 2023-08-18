@@ -2,6 +2,9 @@ const knex = require("knex")(require("../knexfile"));
 const { createLoginJWT } = require("../modules/auth.js");
 const { comparePasswords } = require("../modules/auth");
 
+// WORK IN PROGRESS
+// ===== version 2 of usersController =======
+
 exports.verifyLogin = async (req, res) => {
 	const email = req.body.email;
 	const password = req.body.password;
@@ -11,13 +14,12 @@ exports.verifyLogin = async (req, res) => {
 			.select("users.user_id")
 			.where("users.email", email);
 
-		console.log("userExists: ", userExists);
-
 		if (!userExists) return res.status(404).json({ message: "User not found" });
 
 		const passwordValid = comparePasswords(password, userExists);
-		if (!passwordValid)
+		if (!passwordValid) {
 			return res.status(401).json({ message: "Invalid password" });
+		}
 
 		const loginToken = createLoginJWT(userExists.userId);
 		return res.status(202).json({ loginToken: loginToken });
