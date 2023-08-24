@@ -316,11 +316,13 @@ exports.addImage = async (req, res) => {
 		return res.status(204);
 	}
 
-	const { user_id } = req.body;
+	const { userId } = req.body;
 	const image_url = req.file.filename;
 
 	try {
-		const result = await knex("users").where({ user_id }).update({ image_url });
+		const result = await knex("users")
+			.where("user_id", userId)
+			.update({ image_url });
 		if (result.length === 0) {
 			return res.status(404).json({ error: "User not found" });
 		}
