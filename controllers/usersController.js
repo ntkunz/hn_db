@@ -321,7 +321,7 @@ exports.addImage = async (req, res) => {
 
 	try {
 		const result = await knex("users")
-			.where("user_id", userId)
+			.where("user_id", "=", userId)
 			.update({ image_url });
 		if (result.length === 0) {
 			return res.status(404).json({ error: "User not found" });
