@@ -58,7 +58,7 @@ exports.login = async (req, res) => {
 			return res.status(401).send(`Credentials Wrong`);
 		}
 
-		const passwordValid = comparePasswords(
+		const passwordValid = await comparePasswords(
 			req.body.password,
 			foundUser.password
 		);
