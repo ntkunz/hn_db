@@ -28,8 +28,8 @@ let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
 exports.login = async (req, res) => {
 	const userEmail = req.body.email;
 
-	// TODO : Validate email
-	// TODO : Validate password
+	// TODO : Validate email with javascript utility
+	// TODO : Validate password with javascript utility
 
 	// TODO : Replace foundUser below with getUser once updated
 	try {
@@ -174,7 +174,6 @@ exports.getNeighbors = async (req, res) => {
 			.join("userskills", function () {
 				this.on("users.user_id", "=", "userskills.user_id");
 			})
-			.whereNot("users.user_id", loggedInUser.user_id)
 			.select(
 				"users.user_id",
 				"users.about",
