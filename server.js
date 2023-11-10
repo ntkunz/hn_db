@@ -6,10 +6,16 @@ const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 8080;
 const { protect } = require("./modules/auth");
+const allowedOrigins = process.env.ALLOWED_ORIGINS.split(',');
 
 const corsOptions = {
-	// TODO : Add test environment to origin
-	origin: process.env.CLIENT_URL,
+	origin: function (origin, callback) {
+		if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+		  callback(null, true);
+		} else {
+		  callback(new Error('Not allowed by CORS'));
+		}
+	 },
 };
 
 // TODO : Move rateLimit variables to utils file
