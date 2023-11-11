@@ -6,14 +6,21 @@ const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 8080;
 const { protect } = require("./modules/auth");
+const { protectV2 } = require("./modules/auth");
 const allowedOrigins = process.env.ALLOWED_ORIGINS;
 
 const corsOptions = {
 	// TODO : Add test environment to origin
 	// origin: process.env.CLIENT_URL,
 	// allowedOrigins
-
-};
+	origin: function (origin, callback) {
+		if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+		  callback(null, true);
+		} else {
+		  callback(new Error('Not allowed by CORS'));
+		}
+}
+}
 
 // TODO : Move rateLimit variables to utils file
 const limiter = rateLimit({
@@ -39,14 +46,15 @@ const userSkillsRoutes = require("./routes/userSkillsRoute");
 const messageRoutes = require("./routes/messagesRoute");
 
 // IN PROGRESS : v2 routes for routes and controllers refactor
-// const userRoutesV2 = require("./routes/usersRouteV2");
+// const userRoutesV2 = require("./routes/userRoutesV2");
 const authRoutesV2 = require("./routes/authRoutesV2");
 
 app.use("/messages", protect, messageRoutes);
 app.use("/users", protect, userRoutes);
 app.use("/userskills", protect, userSkillsRoutes);
-// app.use("/users/v2", protect, userRoutesV2);
-app.use("/v2/auth", authRoutesV2);
+// app.use("v2/user", protect, userRoutesV2);
+// app.use("/v2/user", userRoutesV2);
+app.use("/v2/auth", protectV2, authRoutesV2);
 
 //catch-all to make sure all routes work since frontend is single page application
 // TODO : test that this is not necessary, I think all of my routes are covered above

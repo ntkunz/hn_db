@@ -6,14 +6,14 @@ dotenv.config();
 // ============ version 2 =========
 
 const createLoginJWT = (userId) => {
-	const loginTokenCreated = jwt.sign(
+	const createdLoginToken = jwt.sign(
 		{ userId: userId },
 		process.env.JWT_SECRET,
 		{
 			expiresIn: "90d",
 		}
 	);
-	return loginTokenCreated;
+	return createdLoginToken;
 };
 
 // ============= version 1 ===========
@@ -73,6 +73,50 @@ const protect = (req, res, next) => {
 	}
 };
 
+const protectV2 = (req, res, next) => {
+
+	if (req.method === "POST" && req.originalUrl.startsWith("/v2/auth")) {
+			return next();
+		}
+
+	const bearerToken = req.headers.authorization.split(" ")[1];
+	console.log("bearerToken: ", bearerToken);
+	if (!bearerToken) {
+		//pre signed-in routes bypass from previous version
+		// if (
+		// 	// req.originalUrl === "/users/login" ||
+		// 	// req.originalUrl === "/users/newemail" ||
+		// 	// req.originUrl === "/users/verify" ||
+		// 	// (req.method === "POST" && req.originalUrl.startsWith("/userskills")) ||
+		// 	// (req.method === "POST" && req.originalUrl.startsWith("/users"))
+		// 	(req.method === "POST" && req.originalUrl.startsWith("/v2/auth"))
+		// ) {
+		// 	return next();
+		// }
+		return res.status(401).json({ message: "not authorized" });
+	}
+
+	//also leftover from previous version
+	// if (!userToken) {
+	// 	console.log("Cannot validate without user token");
+	// 	return res.status(401).json({ message: "invalid token" });
+	// }
+
+	try {
+		//Confirm token is not expired
+		const user = jwt.verify(bearerToken, process.env.JWT_SECRET);
+		if (user.exp < Date.now() / 1000) {
+			console.log("token expired for user: ", user);
+			return res.status(401).json({ message: "token expired" });
+		}
+		req.user = user; // TODO : This seems useless, test later
+		return next();
+	} catch (error) {
+		console.log("Authorization error: ", error);
+		return res.status(401).json({ message: "bad token" });
+	}
+};
+
 // === hash password ===
 const hashPassword = (password) => {
 	const salt = bcrypt.genSaltSync(10);
@@ -116,6 +160,7 @@ module.exports = {
 	createLoginJWT,
 	createJWT,
 	protect,
+	protectV2,
 	comparePasswords,
 	hashPassword,
 	getInfoFromToken,
