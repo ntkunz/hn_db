@@ -9,28 +9,90 @@ const { comparePasswords } = require("../modules/auth.js");
 // ===== version 2 of usersController =======
 
 exports.verifyLogin = async (req, res) => {
-	// const email = req.body.email;
-	// const password = req.body.password;
-
+	// TODO : Validate email and password
+	// TODO : Sanitize user input
 	try {
-		const doesUserExist = await knex("users")
+		const userCredentialsFromDb = await knex("users")
 			.select("users.user_id", "users.password")
 			.where("users.email", req.body.email).first();
-			console.log('doesUserExist: ', doesUserExist);
 
-		// TODO - Update doesUserExist[0] to more readable name
+		if (!userCredentialsFromDb.user_id) return res.status(401).json({ message: "Invalid credentails" });
 
-		if (!doesUserExist.user_id) return res.status(401).json({ message: "Invalid credentails" });
-
-		// const passwordValid = comparePasswords(password, doesUserExist);
-		const passwordValid = comparePasswords(req.body.password, doesUserExist.password);
+		const passwordValid = await comparePasswords(req.body.password, userCredentialsFromDb.password);
 		if (!passwordValid) {
-			console.log('Invalid Password');
+			console.log(`Invalid Password attempted for req.body.email: ${req.body.email}`);
 			return res.status(401).json({ message: "Invalid credentials" });
 		}
+		const userId = userCredentialsFromDb.user_id;
 
-		const loginToken = createLoginJWT(doesUserExist.user_id);
-		return res.status(202).json({ loginToken: loginToken });
+		// #3 - get user and userSkills
+	const user = await knex("users")
+		.join("userskills", "users.user_id", "userskills.user_id")
+		// .select("users.*")
+		.select(
+			{ userId: "users.user_id" },
+			{ about: "users.about" },
+			{ email: "users.email" },
+			{ firstName: "users.first_name" },
+			{ lastName: "users.last_name" },
+			{ location: "users.location" },
+			{ imageUrl: "users.image_url" },
+			{ status: "users.status" },
+			// { password: "users.password" },
+			{ home: "users.home" },
+			{ city: "users.city" },
+			{ province: "users.province" },
+			{ address: "users.address" },
+			{ createdAt: "users.created_at" }
+		)
+		.select(
+			knex.raw(
+				"JSON_OBJECTAGG(userskills.skill, userskills.offer) as barters"
+			)
+		)
+		.groupBy("users.user_id")
+		.where("users.user_id", userId)
+		.first();
+
+		// TODO : move get user and get neighbors into separate files
+
+			const neighbors = await knex("users")
+			.join("userskills", "users.user_id", "userskills.user_id")
+			.select(
+				{ userId: "users.user_id" },
+				{ about: "users.about" },
+				{ firstName: "users.first_name" },
+				{ imageUrl: "users.image_url" },
+				{ status: "users.status" },
+				{ createdAt: "users.created_at" }
+			)
+			.select(
+				knex.raw(
+					"JSON_OBJECTAGG(userskills.skill, userskills.offer) as barters"
+				)
+			)
+			.whereRaw(
+				"st_distance_sphere(st_geomfromtext(st_aswkt(location), 0), st_geomfromtext('POINT(" +
+					user.location.x +
+					" " +
+					user.location.y +
+					")', 0)) < 500"
+			)
+			.groupBy("users.user_id");
+
+			const sortedNeighbors = 
+			neighbors.sort((a, b) => {
+				if (a.userId === user.user_id) {
+					return -1; // a comes before b
+				} else if (b.userId === user.user_id) {
+					return 1; // b comes before a
+				} else {
+					return 0; // maintain the original order
+			}});
+
+
+		const loginToken = createLoginJWT(userCredentialsFromDb.user_id);
+		return res.status(202).json({ loginToken: loginToken, user: user, neighbors: sortedNeighbors });
 	} catch (error) {
 		console.log("verifyLoginError: ", error);
 		return res.status(401).json({ message: "Invalid credentails" });
@@ -42,7 +104,7 @@ exports.verifyLogin = async (req, res) => {
 	//    - return status okay if all okay
 };
 
-exports.loginUser = async (req, res) => {
+exports.loginUserWithToken = async (req, res) => {
 	const userToken = req.headers.authorization.split(" ")[1];
 
 	if (!userToken) {
@@ -132,7 +194,7 @@ exports.loginUser = async (req, res) => {
 	// const userId = jwt.verify(, process.env.JWT_SECRET)
 	// console.log('userId: ', userId);
 	} catch (error) {
-		console.log("loginUserError: ", error);
+		console.log("loginUserWithTokenError: ", error);
 		return res.status(401).json({ message: "Invalid credentails" });
 	}
 

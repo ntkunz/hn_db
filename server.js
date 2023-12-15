@@ -46,15 +46,15 @@ const userSkillsRoutes = require("./routes/userSkillsRoute");
 const messageRoutes = require("./routes/messagesRoute");
 
 // IN PROGRESS : v2 routes for routes and controllers refactor
-// const userRoutesV2 = require("./routes/userRoutesV2");
-const authRoutesV2 = require("./routes/authRoutesV2");
+const userRoutesV2 = require("./routes/userRoutesV2");
+// const authRoutesV2 = require("./routes/authRoutesV2");
 
 app.use("/messages", protect, messageRoutes);
 app.use("/users", protect, userRoutes);
 app.use("/userskills", protect, userSkillsRoutes);
 // app.use("v2/user", protect, userRoutesV2);
-// app.use("/v2/user", userRoutesV2);
-app.use("/v2/auth", protectV2, authRoutesV2);
+app.use("/v2/user", userRoutesV2);
+// app.use("/v2/auth", protectV2, authRoutesV2);
 
 //catch-all to make sure all routes work since frontend is single page application
 // TODO : test that this is not necessary, I think all of my routes are covered above

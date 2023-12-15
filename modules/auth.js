@@ -80,7 +80,7 @@ const protectV2 = (req, res, next) => {
 		}
 
 	const bearerToken = req.headers.authorization.split(" ")[1];
-	console.log("bearerToken: ", bearerToken);
+	
 	if (!bearerToken) {
 		//pre signed-in routes bypass from previous version
 		// if (

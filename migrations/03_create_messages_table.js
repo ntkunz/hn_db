@@ -3,6 +3,7 @@ exports.up = function (knex) {
 		table.increments("id").primary();
 		table.uuid("sender_id").notNullable();
 		table.uuid("receiver_id").notNullable();
+		//enum for received and read values for receiver
 		table.string("message", 3000).notNullable();
 		table.integer("unix_timestamp").notNullable();
 		table.timestamps(true, true);
