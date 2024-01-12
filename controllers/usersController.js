@@ -196,7 +196,16 @@ exports.getNeighbors = async (req, res) => {
 			)
 			.groupBy("users.user_id");
 
-		return res.status(200).json({ neighbors: neighbors });
+			const sortedNeighbors = neighbors.sort((a, b) => {
+				if (a.user_id === loggedInUser.user_id) {
+					return -1; // a comes before b
+				} else if (b.user_id === loggedInUser.user_id) {
+					return 1; // b comes before a
+				} else {
+					return 0; // maintain the original order
+				}
+			});
+		return res.status(200).json({ neighbors: sortedNeighbors });
 	} catch (error) {
 		console.log("error getting neighbors", error);
 		return res.status(404).send(`Error getting neighbors`);

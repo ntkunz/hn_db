@@ -17,10 +17,12 @@ const rateLimit = require("express-rate-limit");
 require("dotenv").config();
 const PORT = process.env.PORT || 8080;
 const { protect } = require("./modules/auth");
+const allowedOrigins = process.env.ALLOWED_ORIGINS.split(',');
 
 const corsOptions = {
 	// TODO : Add test environment to origin
 	origin: allowedOrigins
+
 };
 
 // TODO : Move rateLimit variables to utils file
