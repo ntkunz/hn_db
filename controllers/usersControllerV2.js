@@ -1,31 +1,34 @@
 const knex = require("knex")(require("../knexfile"));
 const { createLoginJWT } = require("../modules/auth.js");
-const { comparePasswords } = require("../modules/auth");
+const { comparePasswords } = require("../modules/auth.js");
 
 // WORK IN PROGRESS
 // ===== version 2 of usersController =======
 
 exports.verifyLogin = async (req, res) => {
-	const email = req.body.email;
-	const password = req.body.password;
+	// const email = req.body.email;
+	// const password = req.body.password;
 
 	try {
-		const userExists = await knex("users")
+		const doesUserExist = await knex("users")
 			.select("users.user_id")
-			.where("users.email", email);
+			.where("users.email", req.body.email);
+			console.log('doesUserExist: ', doesUserExist);
+			// .where("users.email", email);
 
-		if (!userExists) return res.status(404).json({ message: "User not found" });
+		if (!doesUserExist) return res.status(401).json({ message: "Invalid credentails" });
 
-		const passwordValid = comparePasswords(password, userExists);
+		// const passwordValid = comparePasswords(password, doesUserExist);
+		const passwordValid = comparePasswords(req.body.password, doesUserExist);
 		if (!passwordValid) {
-			return res.status(401).json({ message: "Invalid password" });
+			return res.status(401).json({ message: "Invalid credentials" });
 		}
 
-		const loginToken = createLoginJWT(userExists.userId);
+		const loginToken = createLoginJWT(doesUserExist.userId);
 		return res.status(202).json({ loginToken: loginToken });
 	} catch (error) {
 		console.log("verifyLoginError: ", error);
-		return res.status(404).json({ message: "User not found" });
+		return res.status(401).json({ message: "Invalid credentails" });
 	}
 	//validate email and password formats, handle errors => maybe done in middleware by yup?
 
