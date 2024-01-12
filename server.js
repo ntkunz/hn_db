@@ -2,16 +2,12 @@ const express = require("express");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
 const knex = require("knex")(require("./knexfile"));
-// const http = require("http");
-// const socketIO = require("socket.io");
-
 const app = express();
 const httpServer = createServer(app);
-// const io = socketIO(server);
+const allowedOrigins = process.env.ALLOWED_ORIGINS.split(",");
 const io = new Server(httpServer, {
 	cors: {
-		origin: "http://localhost:3000",
-		// allowedHeaders: ["my-custom-header"],
+		origin: allowedOrigins,
 		credentials: true
 	}
 });
@@ -21,29 +17,11 @@ const rateLimit = require("express-rate-limit");
 require("dotenv").config();
 const PORT = process.env.PORT || 8080;
 const { protect } = require("./modules/auth");
-const allowedOrigins = process.env.ALLOWED_ORIGINS;
-// const allowedOrigins = [process.env.ALLOWED_ORIGINS]; // trying out codeium suggestion
 
-// my version below, which works in production
 const corsOptions = {
 	// TODO : Add test environment to origin
-	origin: process.env.CLIENT_URL,
-	allowedOrigins
+	origin: allowedOrigins
 };
-
-// TESTING: codeium version / v2... testing
-// doesn't seem to work as env variables brought in not as an array in a weird way
-// const corsOptions = {
-// 	origin: (origin, callback) => {
-// 		console.log("origin", origin);
-// 		console.log('allowedOrigins', allowedOrigins);
-// 	  if (allowedOrigins.includes(origin)) {
-// 		 callback(null, true);
-// 	  } else {
-// 		 callback(new Error("Not allowed by CORS"));
-// 	  }
-// 	},
-//  };
 
 // TODO : Move rateLimit variables to utils file
 const limiter = rateLimit({
@@ -53,11 +31,7 @@ const limiter = rateLimit({
 	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 
-// app.use(cors({
-// 	origin: allowedOrigins,
-// }));
 app.use(cors(corsOptions));
-// app.use(cors());
 app.use(limiter);
 app.use(express.json());
 app.use(express.static("public/images"));
@@ -87,7 +61,11 @@ app.get("*", (_req, res) => {
 	// res.sendFile("index.html", { root: __dirname + "./../build" });
 });
 
-// app.listen(PORT, () => {
+// TODO: Add error handling responses to update frontend on message error
+// TODO: Extract "getConversation" to utils file
+// TODO: Move socket events to messagesController 
+// TODO: Add socket events for logging in/returning neighbors, creating user, deleting user, etc
+
 httpServer.listen(PORT, () => {
 	console.log(`Server is running on port: ${PORT}`);
 
@@ -98,13 +76,13 @@ httpServer.listen(PORT, () => {
 		// Handle socket events
 		socket.on('sendMessageToApi', (messageData) => {
 				//add message data to database
-				console.log('messageData', messageData);
 				knex("messages").insert({
 					sender_id: messageData.senderId,
 					receiver_id: messageData.receiverId,
 					message: messageData.message,
 					unix_timestamp: Math.floor(Date.now() / 1000),
 				}) .then (() => {
+					// then respond with all messages
 					const getConversation = knex("messages")
 					.where({ sender_id: messageData.senderId, receiver_id: messageData.receiverId })
 					.orWhere({ receiver_id: messageData.senderId, sender_id: messageData.receiverId });
@@ -118,8 +96,6 @@ httpServer.listen(PORT, () => {
 		});
 		
 		socket.on('joinRoom', (senderId, receiverId) => {
-			console.log('senderId:', senderId);
-			console.log('receiverId:', receiverId);
 			const getConversation = knex("messages")
 			.where({ sender_id: senderId, receiver_id: receiverId })
 			.orWhere({ receiver_id: senderId, sender_id: receiverId });

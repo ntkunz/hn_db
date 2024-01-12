@@ -1,6 +1,5 @@
 const knex = require("knex")(require("../knexfile"));
 const server = require('http').createServer();
-// const io = require('socket.io')(server);
 exports.index = async (req, res) => {
 	const senderId = req.body.senderId;
 	const receiverId = req.body.receiverId;
