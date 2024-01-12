@@ -1,6 +1,7 @@
 const express = require("express");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
+const knex = require("knex")(require("./knexfile"));
 // const http = require("http");
 // const socketIO = require("socket.io");
 
@@ -81,11 +82,9 @@ app.use("/userskills", protect, userSkillsRoutes);
 // app.use("/users/v2", protect, userRoutesV2);
 app.use("/v2/auth", authRoutesV2);
 
-//catch-all to make sure all routes work since frontend is single page application
-// TODO : test that this is not necessary, I think all of my routes are covered above
 app.get("*", (_req, res) => {
-	// console.log('req', _req);
-	res.sendFile("index.html", { root: __dirname + "./../build" });
+	// catchall to catch any undefined routes, but not serving serverside html so blank for now
+	// res.sendFile("index.html", { root: __dirname + "./../build" });
 });
 
 // app.listen(PORT, () => {
@@ -97,13 +96,41 @@ httpServer.listen(PORT, () => {
 		console.log('A user connected');
 		
 		// Handle socket events
-		socket.on('sendMessage', (messageData) => {
-		  // Handle event logic
-		  console.log('messageData:', messageData);
-		  io.emit('receiveMessage', messageData);
-
+		socket.on('sendMessageToApi', (messageData) => {
+				//add message data to database
+				console.log('messageData', messageData);
+				knex("messages").insert({
+					sender_id: messageData.senderId,
+					receiver_id: messageData.receiverId,
+					message: messageData.message,
+					unix_timestamp: Math.floor(Date.now() / 1000),
+				}) .then (() => {
+					const getConversation = knex("messages")
+					.where({ sender_id: messageData.senderId, receiver_id: messageData.receiverId })
+					.orWhere({ receiver_id: messageData.senderId, sender_id: messageData.receiverId });
+					getConversation.then((messages) => {
+						socket.emit('conversation', messages);
+					})
+			})
+				.catch((error) => {
+					console.log('Error in sendMessageToApi:', error);
+				});
 		});
 		
+		socket.on('joinRoom', (senderId, receiverId) => {
+			console.log('senderId:', senderId);
+			console.log('receiverId:', receiverId);
+			const getConversation = knex("messages")
+			.where({ sender_id: senderId, receiver_id: receiverId })
+			.orWhere({ receiver_id: senderId, sender_id: receiverId });
+			getConversation.then((messages) => {
+				socket.emit('conversation', messages);
+			})
+			.catch((error) => {
+				console.log('Error in joinRoom:', error);
+			})
+		})
+
 		// Disconnect event
 		socket.on('disconnect', () => {
 		  console.log('A user disconnected');

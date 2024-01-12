@@ -1,6 +1,6 @@
 const knex = require("knex")(require("../knexfile"));
 const server = require('http').createServer();
-const io = require('socket.io')(server);
+// const io = require('socket.io')(server);
 exports.index = async (req, res) => {
 	const senderId = req.body.senderId;
 	const receiverId = req.body.receiverId;
@@ -23,11 +23,9 @@ exports.index = async (req, res) => {
 	}
 };
 
+// exports.newMessage = async (req, res) => {
 exports.newMessage = async (req, res) => {
 	try {
-		io.on('newMessage', (req) => {
-			console.log('req.body.message', req.body.message);
-		});
 		const newMessage = await knex("messages").insert({
 			sender_id: req.body.senderId,
 			receiver_id: req.body.receiverId,
