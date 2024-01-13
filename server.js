@@ -5,6 +5,7 @@ const knex = require("knex")(require("./knexfile"));
 const app = express();
 const httpServer = createServer(app);
 const allowedOrigins = process.env.ALLOWED_ORIGINS.split(",");
+
 const io = new Server(httpServer, {
 	cors: {
 		origin: allowedOrigins,

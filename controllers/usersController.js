@@ -359,8 +359,9 @@ exports.deleteUser = async (req, res) => {
 	}
 
 	try {
+		await knex("userskills").where('user_id', userId).del();
 		await knex("users").where('user_id', userId).del();
-		// await knex("users").where(whereClause(userEmail)).del();
+		await knex("messages").where('sender_id', userId).orWhere('receiver_id', userId).del();
 		return res.status(200).json({ message: "User deleted successfully" });
 	} catch (error) {
 		console.log("error deleting user", error);

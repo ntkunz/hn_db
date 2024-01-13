@@ -1,4 +1,4 @@
-require("dotenv").config({ path: "../shhh/.env" });
+require("dotenv").config();
 
 /**
  * @type { Object.<string, import("knex").Knex.Config> }
@@ -15,7 +15,6 @@ module.exports = {
 	// };
 
 	// below used for deployment----------
-	// client: "mysql2",
 	client: "mysql2",
 	connection: {
 		host: process.env.DB_HOST,
