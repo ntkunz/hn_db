@@ -1,3 +1,5 @@
+// UPDATE: Both controllers deprecated with use of sockets to retrieve messages on server.js
+
 const knex = require("knex")(require("../knexfile"));
 const server = require('http').createServer();
 exports.index = async (req, res) => {
