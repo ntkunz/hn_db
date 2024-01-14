@@ -1,5 +1,7 @@
-const knex = require("knex")(require("../knexfile"));
+// UPDATE: Both controllers deprecated with use of sockets to retrieve messages on server.js
 
+const knex = require("knex")(require("../knexfile"));
+const server = require('http').createServer();
 exports.index = async (req, res) => {
 	const senderId = req.body.senderId;
 	const receiverId = req.body.receiverId;
@@ -22,6 +24,7 @@ exports.index = async (req, res) => {
 	}
 };
 
+// exports.newMessage = async (req, res) => {
 exports.newMessage = async (req, res) => {
 	try {
 		const newMessage = await knex("messages").insert({

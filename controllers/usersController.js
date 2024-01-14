@@ -196,7 +196,16 @@ exports.getNeighbors = async (req, res) => {
 			)
 			.groupBy("users.user_id");
 
-		return res.status(200).json({ neighbors: neighbors });
+			const sortedNeighbors = neighbors.sort((a, b) => {
+				if (a.user_id === loggedInUser.user_id) {
+					return -1; // a comes before b
+				} else if (b.user_id === loggedInUser.user_id) {
+					return 1; // b comes before a
+				} else {
+					return 0; // maintain the original order
+				}
+			});
+		return res.status(200).json({ neighbors: sortedNeighbors });
 	} catch (error) {
 		console.log("error getting neighbors", error);
 		return res.status(404).send(`Error getting neighbors`);
@@ -350,8 +359,9 @@ exports.deleteUser = async (req, res) => {
 	}
 
 	try {
+		await knex("userskills").where('user_id', userId).del();
 		await knex("users").where('user_id', userId).del();
-		// await knex("users").where(whereClause(userEmail)).del();
+		await knex("messages").where('sender_id', userId).orWhere('receiver_id', userId).del();
 		return res.status(200).json({ message: "User deleted successfully" });
 	} catch (error) {
 		console.log("error deleting user", error);

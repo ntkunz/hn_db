@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const dotenv = require("dotenv");
-dotenv.config();
+dotenv.config({ path: "../shhh/.env" });
 
 // ============ version 2 =========
 
