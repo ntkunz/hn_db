@@ -84,8 +84,6 @@ exports.verifyLogin = async (req, res) => {
 			neighbors.sort((a, b) => {
 				if (a.userId === user.user_id) {
 					return -1; // a comes before b
-				} else if (b.userId === user.user_id) {
-					return 1; // b comes before a
 				} else {
 					return 0; // maintain the original order
 			}});
