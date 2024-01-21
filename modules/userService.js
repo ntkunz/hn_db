@@ -61,11 +61,11 @@ async function getUser(email, joinClause) {
 	}
 }
 
-async function getUserPassword(whereClause) {
+async function getUserPassword(email) {
 	try {
 		const user = await knex("users")
 			.select("password", "user_id")
-			.where(whereClause)
+			.where("email", email)
 			.first();
 		return user;
 	} catch (err) {
