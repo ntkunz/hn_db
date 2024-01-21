@@ -346,7 +346,7 @@ exports.deleteUser = async (req, res) => {
 	const userId = req.body.userId;
 	const userPassword = req.body.password;
 
-	const userDbPassword = await getUserPassword(whereClause(userEmail));
+	const userDbPassword = await getUserPassword(userEmail);
 
 	const pwCheck = await comparePasswords(userPassword, userDbPassword.password);
 
