@@ -3,16 +3,16 @@
 // const yup = require("yup");
 
 const validate = (schema) => async (req, res, next) => {
-	try {
-		await schema.validate({
-			body: req.body,
-			query: req.query,
-			params: req.params,
-		});
-		return next();
-	} catch (error) {
-		return res.status(401).json({ type: error.name, message: error.message });
-	}
+  try {
+    await schema.validate({
+      body: req.body,
+      query: req.query,
+      params: req.params,
+    });
+    return next();
+  } catch (error) {
+    return res.status(401).json({ type: error.name, message: error.message });
+  }
 };
 
 // === I THINK THAT THE COMPILER DOESN'T LIKE THAT THIS ISN'T A CALLBACK FUNCTION, SO CANNOT EXPORT IT AS A MODULE ===
@@ -32,6 +32,6 @@ const validate = (schema) => async (req, res, next) => {
 // });
 
 module.exports = {
-	validate,
-	// loginSchema,
+  validate,
+  // loginSchema,
 };

@@ -1,8 +1,7 @@
-PORT = 8080
-DATABASE_URL = *the database url*
-DB_DBNAME = *your database name*
-DB_USER = *your mysql username here*
-DB_PASSWORD = *your mysql database password here*
-JWT_SECRET = *add a secret code here*
-JWT_EXPIRES_IN = *an amount of time*
-WHITELISTED_CLIENTS = *either one or a comma separated list of clients allowed to access the database*
+PORT = _set by heroku on startup if deployed through them_
+DATABASE*URL = \_the database url*
+DB*DBNAME = \_your database name*
+DB*USER = \_your mysql username here*
+DB*PASSWORD = \_your mysql database password here*
+JWT*SECRET = \_add a secret code here*
+ALLOWED*ORIGINS = \_array of origins allowed to access database*

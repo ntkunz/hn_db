@@ -3,21 +3,21 @@ const messages = require("../seed_data/messages");
 const userskills = require("../seed_data/userskills");
 
 exports.seed = function (knex) {
-    return knex("users")
+  return knex("users")
     .del()
     .then(() => {
-        return knex("users").insert(userData);
+      return knex("users").insert(userData);
     })
     .then(() => {
-        return knex("messages").del();
+      return knex("messages").del();
     })
     .then(() => {
-        return knex("messages").insert(messages);
+      return knex("messages").insert(messages);
     })
     .then(() => {
-        return knex("userskills").del();
+      return knex("userskills").del();
     })
     .then(() => {
-        return knex("userskills").insert(userskills);
+      return knex("userskills").insert(userskills);
     });
 };
