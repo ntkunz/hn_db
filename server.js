@@ -74,6 +74,35 @@ app.get("/test", (req, res) => {
   }
 });
 
+app.post("/create-account", (req, res) => {
+  console.log("req.body: ", req.body);
+  const accessToken = req.headers.authorization.replace("Bearer ", "");
+  const verifiedPayload = jwt.verify(
+    accessToken,
+    process.env.USERFRONT_JWT_PUBLIC_KEY,
+    {
+      algorithm: ["RS256"],
+    }
+  );
+  console.log("verifiedPayload: ", verifiedPayload);
+  // TODO : Figure out why log is payload and response is cors response
+  res.send(verifiedPayload);
+});
+
+// app.post("/", (req, res) => {
+//   console.log("req.body: ", req.body);
+//   const accessToken = req.headers.authorization.replace("Bearer ", "");
+//   //   console.log("req.headers.authorization: ", req.headers.authorization);
+//   const verifiedPayload = jwt.verify(
+//     accessToken,
+//     process.env.USERFRONT_JWT_PUBLIC_KEY,
+//     {
+//       algorithm: ["RS256"],
+//     }
+//   );
+//   res.sendStatus(200).send(verifiedPayload);
+// });
+
 app.use("/messages", protect, messageRoutes);
 app.use("/users", protect, userRoutes);
 app.use("/userskills", protect, userSkillsRoutes);
