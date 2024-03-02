@@ -53,11 +53,69 @@ const messageRoutes = require("./routes/messagesRoute");
 const userRoutesV2 = require("./routes/userRoutesV2");
 // const authRoutesV2 = require("./routes/authRoutesV2");
 
+async function getNeighbors(userId) {
+  const user = await knex("users")
+    .join("userskills", "users.user_id", "userskills.user_id")
+    // .select("users.*")
+    .select(
+      { userId: "users.user_id" },
+      { about: "users.about" },
+      { firstName: "users.first_name" },
+      { lastName: "users.last_name" },
+      { location: "users.location" },
+      { imageUrl: "users.image_url" },
+      { status: "users.status" },
+      { createdAt: "users.created_at" }
+    )
+    .select(
+      knex.raw("JSON_OBJECTAGG(userskills.skill, userskills.offer) as barters")
+    )
+    .groupBy("users.user_id")
+    .where("users.user_id", userId)
+    .first();
+
+  // console.log("user: ", user);
+  const neighbors = await knex("users")
+    .join("userskills", "users.user_id", "userskills.user_id")
+    .select(
+      { userId: "users.user_id" },
+      { about: "users.about" },
+      { firstName: "users.first_name" },
+      { imageUrl: "users.image_url" },
+      { status: "users.status" },
+      { createdAt: "users.created_at" }
+    )
+    .select(
+      knex.raw("JSON_OBJECTAGG(userskills.skill, userskills.offer) as barters")
+    )
+    .whereRaw(
+      "st_distance_sphere(st_geomfromtext(st_aswkt(location), 0), st_geomfromtext('POINT(" +
+        user.location.x +
+        " " +
+        user.location.y +
+        ")', 0)) < 500"
+    )
+    .groupBy("users.user_id");
+
+  // console.log("neighbors: ", neighbors);
+
+  const sortedNeighbors = neighbors.sort((a, b) => {
+    if (a.userId === user.user_id) {
+      return -1; // a comes before b
+    } else {
+      return 0; // maintain the original order
+    }
+  });
+
+  // console.log("sortedNeighbors: ", sortedNeighbors);
+
+  return sortedNeighbors;
+}
+
 // add response to handle when a get request call is made to the /test route
-app.get("/test", (req, res) => {
+app.get("/getuserInfo", async (req, res) => {
   try {
     const accessToken = req.headers.authorization.replace("Bearer ", "");
-    //   console.log("req.headers.authorization: ", req.headers.authorization);
     const verifiedPayload = jwt.verify(
       accessToken,
       process.env.USERFRONT_JWT_PUBLIC_KEY,
@@ -65,28 +123,39 @@ app.get("/test", (req, res) => {
         algorithm: ["RS256"],
       }
     );
-    console.log("verifiedPayload: ", verifiedPayload);
-    res.send(verifiedPayload);
+    if (!verifiedPayload) {
+      return res.sendStatus(401);
+    }
+
+    const userId = verifiedPayload.userUuid;
+    const XXXuserDataXXX = await getNeighbors(userId);
+
+    console.log("XXXuserDataXXX: ", XXXuserDataXXX);
+    return res.send(XXXuserDataXXX).status(200);
   } catch (error) {
     console.log("error: ", error);
-    // send back a 401 on error
-    res.sendStatus(401);
+    return res.sendStatus(401);
   }
 });
 
 app.post("/create-account", (req, res) => {
-  console.log("req.body: ", req.body);
-  const accessToken = req.headers.authorization.replace("Bearer ", "");
-  const verifiedPayload = jwt.verify(
-    accessToken,
-    process.env.USERFRONT_JWT_PUBLIC_KEY,
-    {
-      algorithm: ["RS256"],
+  try {
+    const accessToken = req.headers.authorization.replace("Bearer ", "");
+    const verifiedPayload = jwt.verify(
+      accessToken,
+      process.env.USERFRONT_JWT_PUBLIC_KEY,
+      {
+        algorithm: ["RS256"],
+      }
+    );
+    if (!verifiedPayload) {
+      return res.sendStatus(401);
     }
-  );
-  console.log("verifiedPayload: ", verifiedPayload);
-  // TODO : Figure out why log is payload and response is cors response
-  res.send(verifiedPayload);
+    return res.sendStatus(200);
+  } catch (error) {
+    console.log("error: ", error);
+    return res.sendStatus(401);
+  }
 });
 
 // app.post("/", (req, res) => {

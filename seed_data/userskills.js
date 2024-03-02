@@ -1,19 +1,16 @@
 module.exports = [
   {
-    user_id: "32b31824-a00c-4023-8a81-b84794f9a92d",
-    user_id: "32b31824-a00c-4023-8a81-b84794f9a92d",
+    user_id: "4e5fdd59-d5c0-4445-a8d8-08ade170dbc3",
     skill: "Skateboarding Lessons",
     offer: true,
   },
   {
-    // user_id: "32b31824-a00c-4023-8a81-b84794f9a92d",
-    user_id: "32b31824-a00c-4023-8a81-b84794f9a92d",
+    user_id: "4e5fdd59-d5c0-4445-a8d8-08ade170dbc3",
     skill: "Classes in Cool",
     offer: true,
   },
   {
-    user_id: "32b31824-a00c-4023-8a81-b84794f9a92d",
-    // user_id: "32b31824-a00c-4023-8a81-b84794f9a92d",
+    user_id: "4e5fdd59-d5c0-4445-a8d8-08ade170dbc3",
     skill: "Meals",
     offer: false,
   },
