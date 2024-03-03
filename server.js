@@ -53,10 +53,10 @@ const messageRoutes = require("./routes/messagesRoute");
 const userRoutesV2 = require("./routes/userRoutesV2");
 // const authRoutesV2 = require("./routes/authRoutesV2");
 
+// TODO : Relocate getNeighbors function to utils
 async function getNeighbors(userId) {
   const user = await knex("users")
     .join("userskills", "users.user_id", "userskills.user_id")
-    // .select("users.*")
     .select(
       { userId: "users.user_id" },
       { about: "users.about" },
@@ -74,7 +74,6 @@ async function getNeighbors(userId) {
     .where("users.user_id", userId)
     .first();
 
-  // console.log("user: ", user);
   const neighbors = await knex("users")
     .join("userskills", "users.user_id", "userskills.user_id")
     .select(
@@ -97,24 +96,20 @@ async function getNeighbors(userId) {
     )
     .groupBy("users.user_id");
 
-  // console.log("neighbors: ", neighbors);
-
   const sortedNeighbors = neighbors.sort((a, b) => {
     if (a.userId === user.user_id) {
-      return -1; // a comes before b
+      return -1;
     } else {
-      return 0; // maintain the original order
+      return 0;
     }
   });
-
-  // console.log("sortedNeighbors: ", sortedNeighbors);
 
   return sortedNeighbors;
 }
 
-// add response to handle when a get request call is made to the /test route
-app.get("/getuserInfo", async (req, res) => {
+app.get("/getUserInfo", async (req, res) => {
   try {
+    // TODO : Extract verifyUser to a function, next 8 lines.
     const accessToken = req.headers.authorization.replace("Bearer ", "");
     const verifiedPayload = jwt.verify(
       accessToken,
@@ -123,14 +118,13 @@ app.get("/getuserInfo", async (req, res) => {
         algorithm: ["RS256"],
       }
     );
+
     if (!verifiedPayload) {
       return res.sendStatus(401);
     }
 
     const userId = verifiedPayload.userUuid;
     const XXXuserDataXXX = await getNeighbors(userId);
-
-    console.log("XXXuserDataXXX: ", XXXuserDataXXX);
     return res.send(XXXuserDataXXX).status(200);
   } catch (error) {
     console.log("error: ", error);
@@ -139,6 +133,7 @@ app.get("/getuserInfo", async (req, res) => {
 });
 
 app.post("/create-account", (req, res) => {
+  // TODO : Extract verifyUser to a function, next 8 lines.
   try {
     const accessToken = req.headers.authorization.replace("Bearer ", "");
     const verifiedPayload = jwt.verify(
@@ -148,9 +143,11 @@ app.post("/create-account", (req, res) => {
         algorithm: ["RS256"],
       }
     );
+
     if (!verifiedPayload) {
       return res.sendStatus(401);
     }
+
     return res.sendStatus(200);
   } catch (error) {
     console.log("error: ", error);
