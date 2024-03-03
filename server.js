@@ -6,6 +6,8 @@ const app = express();
 const httpServer = createServer(app);
 const allowedOrigins = process.env.ALLOWED_ORIGINS.split(",");
 const jwt = require("jsonwebtoken");
+const geoApiUrl = process.env.REACT_APP_GEO_URL;
+const geoApiKey = process.env.REACT_APP_GEO_API_KEY;
 
 const io = new Server(httpServer, {
   cors: {
@@ -132,7 +134,33 @@ app.get("/getUserInfo", async (req, res) => {
   }
 });
 
-app.post("/create-account", (req, res) => {
+async function getUserLatLong(homeAddress, city, province) {
+  const address = `${homeAddress} ${city} ${province}`;
+  const addressRequest = address
+    .replaceAll(",", " ")
+    .replaceAll(" ", "+")
+    .replaceAll(".", "+");
+  console.log("addressRequest: ", addressRequest);
+
+  const userGeocache = await fetch(
+    `${geoApiUrl}?q=${addressRequest}&apiKey=${geoApiKey}`
+  );
+
+  const userGeocacheJson = await userGeocache.json();
+  console.log("userGeocacheJson: ", userGeocacheJson);
+  console.log(
+    "userGeocacheJson.items[0].position: ",
+    userGeocacheJson.items[0].position
+  );
+  // console.log("userGeocache: ", userGeocache);
+  const userLatLong = [
+    userGeocacheJson.items[0].position.lng,
+    userGeocacheJson.items[0].position.lat,
+  ];
+  return userLatLong;
+}
+
+app.post("/create-account", async (req, res) => {
   // TODO : Extract verifyUser to a function, next 8 lines.
   try {
     const accessToken = req.headers.authorization.replace("Bearer ", "");
@@ -147,6 +175,27 @@ app.post("/create-account", (req, res) => {
     if (!verifiedPayload) {
       return res.sendStatus(401);
     }
+    console.log("req.body: ", req.body);
+
+    // TODO : Go get lat long for user
+    const userLatLong = await getUserLatLong(
+      req.body.homeAddress,
+      req.body.city,
+      req.body.province
+    );
+
+    console.log("userLatLong: ", userLatLong);
+
+    // TODO : add error handling if userLatLong returns an error
+
+    req.body.location = {
+      x: userLatLong[0],
+      y: userLatLong[1],
+    };
+
+    req.body.status = "active";
+
+    await knex("users").insert(req.body);
 
     return res.sendStatus(200);
   } catch (error) {
