@@ -265,6 +265,7 @@ httpServer.listen(PORT, () => {
             });
           getConversation.then((messages) => {
             socket.emit("conversation", messages);
+            // socket.to(room).emit("conversation", messages);
           });
         })
         .catch((error) => {
@@ -273,6 +274,7 @@ httpServer.listen(PORT, () => {
     });
 
     socket.on("joinRoom", (senderId, receiverId) => {
+      // TODO : Create a room id and transmit it back to the users when they join that conversation... or add it to all messages?
       const getConversation = knex("messages")
         .where({ sender_id: senderId, receiver_id: receiverId })
         .orWhere({ receiver_id: senderId, sender_id: receiverId });
@@ -291,3 +293,55 @@ httpServer.listen(PORT, () => {
     });
   });
 });
+
+// Suggestion from Codeium for creating a roomId... maybe do that by sorting the id's first?
+
+// socket.on("joinRoom", (senderId, receiverId) => {
+//   // Generate a unique room ID. This could be a combination of senderId and receiverId or a separate conversation ID from your database.
+//   const roomId = `${senderId}-${receiverId}`;
+
+//   // Join the room
+//   socket.join(roomId);
+
+//   // Fetch and emit previous conversation messages to the room
+//   const getConversation = knex("messages")
+//     .where({ sender_id: senderId, receiver_id: receiverId })
+//     .orWhere({ receiver_id: senderId, sender_id: receiverId });
+//   getConversation
+//     .then((messages) => {
+//       io.to(roomId).emit("conversation", messages); // Emit to all users in the room
+//     })
+//     .catch((error) => {
+//       console.log("Error in joinRoom:", error);
+//     });
+// });
+
+// socket.on("sendMessageToApi", (messageData) => {
+//   // Add message data to database
+//   knex("messages")
+//     .insert({
+//       sender_id: messageData.senderId,
+//       receiver_id: messageData.receiverId,
+//       message: messageData.message,
+//       unix_timestamp: Math.floor(Date.now() / 1000),
+//     })
+//     .then(() => {
+//       // Respond with all messages
+//       const getConversation = knex("messages")
+//         .where({
+//           sender_id: messageData.senderId,
+//           receiver_id: messageData.receiverId,
+//         })
+//         .orWhere({
+//           receiver_id: messageData.senderId,
+//           sender_id: messageData.receiverId,
+//         });
+//       getConversation.then((messages) => {
+//         const roomId = `${messageData.senderId}-${messageData.receiverId}`;
+//         io.to(roomId).emit("conversation", messages); // Emit to all users in the room
+//       });
+//     })
+//     .catch((error) => {
+//       console.log("Error in sendMessageToApi:", error);
+//     });
+// });
