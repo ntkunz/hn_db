@@ -235,15 +235,41 @@ app.get("*", (_req, res) => {
 // TODO: Move socket events to messagesController
 // TODO: Add socket events for logging in/returning neighbors, creating user, deleting user, etc
 
+function sortRooms(id, userId) {
+  const sortedStrings = [id, userId].sort();
+  return sortedStrings.join("");
+}
+
 httpServer.listen(PORT, () => {
   console.log(`Server is running on port: ${PORT}`);
 
   // Socket connection
   io.on("connection", (socket) => {
     console.log("A user connected");
+    // TODO : Go get most recent socket even compared to last seen date from user's profile (need to pass that in)
+    // and notify if any new messages
+
+    socket.on("joinRoom", (senderId, receiverId) => {
+      const roomId = sortRooms(senderId, receiverId);
+      socket.join(roomId);
+      console.log("User joined room: ", roomId);
+
+      // TODO : Create a room id and transmit it back to the users when they join that conversation... or add it to all messages?
+      const getConversation = knex("messages")
+        .where({ sender_id: senderId, receiver_id: receiverId })
+        .orWhere({ receiver_id: senderId, sender_id: receiverId });
+      getConversation
+        .then((messages) => {
+          socket.emit("conversation", messages);
+        })
+        .catch((error) => {
+          console.log("Error in joinRoom:", error);
+        });
+    });
 
     // Handle socket events
     socket.on("sendMessageToApi", (messageData) => {
+      const roomId = sortRooms(messageData.senderId, messageData.receiverId);
       //add message data to database
       knex("messages")
         .insert({
@@ -264,26 +290,12 @@ httpServer.listen(PORT, () => {
               sender_id: messageData.receiverId,
             });
           getConversation.then((messages) => {
-            socket.emit("conversation", messages);
-            // socket.to(room).emit("conversation", messages);
+            // socket.in(roomId).emit("conversation", messages);
+            io.in(roomId).emit("conversation", messages);
           });
         })
         .catch((error) => {
           console.log("Error in sendMessageToApi:", error);
-        });
-    });
-
-    socket.on("joinRoom", (senderId, receiverId) => {
-      // TODO : Create a room id and transmit it back to the users when they join that conversation... or add it to all messages?
-      const getConversation = knex("messages")
-        .where({ sender_id: senderId, receiver_id: receiverId })
-        .orWhere({ receiver_id: senderId, sender_id: receiverId });
-      getConversation
-        .then((messages) => {
-          socket.emit("conversation", messages);
-        })
-        .catch((error) => {
-          console.log("Error in joinRoom:", error);
         });
     });
 
@@ -293,6 +305,9 @@ httpServer.listen(PORT, () => {
     });
   });
 });
+
+//     socket.on(
+// });
 
 // Suggestion from Codeium for creating a roomId... maybe do that by sorting the id's first?
 
