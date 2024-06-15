@@ -26,8 +26,8 @@ exports.up = function (knex) {
     table.uuid("user_id").primary().notNullable();
     table.string("first_name").notNullable();
     table.string("last_name").notNullable();
-    table.string("email").notNullable();
-    table.string("password").nullable();
+    table.string("email").nullable().defaultTo("");
+    // table.string("password").nullable();
     table
       .string("image_url")
       .nullable()

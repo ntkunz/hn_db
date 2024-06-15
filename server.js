@@ -134,8 +134,15 @@ app.get("/getUserInfo", async (req, res) => {
   }
 });
 
-async function getUserLatLong(homeAddress, city, province) {
+// TODO : Separate below out into 2 functions, one to create the address
+//    and snother to make the fetch request
+
+function createAddress(homeAddress, city, province) {
   const address = `${homeAddress} ${city} ${province}`;
+  return address;
+}
+
+async function getUserLatLong(address) {
   const addressRequest = address
     .replaceAll(",", " ")
     .replaceAll(" ", "+")
@@ -173,29 +180,48 @@ app.post("/create-account", async (req, res) => {
     );
 
     if (!verifiedPayload) {
-      return res.sendStatus(401);
+      return res.sendStatus(401).send("Unauthorized");
     }
-    console.log("req.body: ", req.body);
 
-    // TODO : Go get lat long for user
-    const userLatLong = await getUserLatLong(
+    const address = createAddress(
       req.body.homeAddress,
       req.body.city,
       req.body.province
     );
 
+    // TODO : Go get lat long for user
+    const userLatLong = await getUserLatLong(address);
+
     console.log("userLatLong: ", userLatLong);
 
     // TODO : add error handling if userLatLong returns an error
 
-    req.body.location = {
-      x: userLatLong[0],
-      y: userLatLong[1],
-    };
+    // NOTE !!!!!!!!!!!!! Somethins is broken with my lat long since I changed from .x and .y object to separate lat long below
+    // this happened on June 9th 2024
+
+    // req.body.location = {
+    //   x: userLatLong[0],
+    //   y: userLatLong[1],
+    // };
 
     req.body.status = "active";
+    // TODO : figure out joining tables and adding userskills as barters and skills...
 
-    await knex("users").insert(req.body);
+    const newUserData = {
+      user_id: req.body.userId,
+      about: req.body.about,
+      first_name: req.body.firstName,
+      last_name: req.body.lastName,
+      location: knex.raw("POINT(?, ?)", [userLatLong[0], userLatLong[1]]),
+      image_url: req.body.image_url,
+      status: req.body.status,
+      home: req.body.homeAddress,
+      city: req.body.city,
+      province: req.body.province,
+      address: address,
+    };
+
+    await knex("users").insert(newUserData);
 
     return res.sendStatus(200);
   } catch (error) {
